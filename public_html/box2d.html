@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script type="text/javascript" src="js/stats.min.js"></script>
+    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
+    <script type="text/javascript">
+
+
+    	function onloader(){
+
+    		var stats = new Stats();
+	        stats.domElement.style.position = 'absolute';
+	        stats.domElement.style.right = '1px';
+	        stats.domElement.style.top = '1px';
+	        stats.domElement.style.zIndex = 100;        
+	        document.getElementById( 'viewport' ).appendChild( stats.domElement );
+
+	        var   b2Vec2 = Box2D.Common.Math.b2Vec2
+            ,  b2AABB = Box2D.Collision.b2AABB
+         	,	b2BodyDef = Box2D.Dynamics.b2BodyDef
+         	,	b2Body = Box2D.Dynamics.b2Body
+         	,	b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+         	,	b2Fixture = Box2D.Dynamics.b2Fixture
+         	,	b2World = Box2D.Dynamics.b2World
+         	,	b2MassData = Box2D.Collision.Shapes.b2MassData
+         	,	b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+         	,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+         	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+            ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+            ;
+
+	        var worldAABB = new b2AABB();            
+			worldAABB.lowerBound.Set(-1000, -1000);
+			worldAABB.upperBound.Set(1000, 1000);
+			var gravity = new b2Vec2(0, 10);
+			var doSleep = true;
+			var world = new b2World(worldAABB, gravity, doSleep); 
+
+
+            var fixtureDef = new b2FixtureDef();
+            fixtureDef.density = 1;
+            fixtureDef.friction = 0.5;
+            fixtureDef.restitution = 0.2;
+
+            //ground definition
+            var bodyDef = new b2BodyDef();
+            bodyDef.type = b2Body.b2_staticBody;
+
+            //top wall
+            fixtureDef.shape = new b2PolygonShape();
+            fixtureDef.shape.SetAsBox(300,5);
+            bodyDef.position.Set(300,5);
+            world.CreateBody(bodyDef).CreateFixture(fixtureDef);
+
+            //bottom wall
+            bodyDef.position.Set(300,595);
+            world.CreateBody(bodyDef).CreateFixture(fixtureDef);
+
+            //right wall
+            fixtureDef.shape = new b2PolygonShape();
+            fixtureDef.shape.SetAsBox(5,300);
+            bodyDef.position.Set(595,300);
+            world.CreateBody(bodyDef).CreateFixture(fixtureDef);
+
+            //left wall
+            bodyDef.position.Set(5,300);
+            world.CreateBody(bodyDef).CreateFixture(fixtureDef);
+
+
+            //create a ball
+            bodyDef.type = b2Body.b2_dynamicBody;
+            fixtureDef.shape = new b2CircleShape();
+            fixtureDef.shape.SetRadius(30);
+
+            bodyDef.position.Set(300,300);
+            world.CreateBody(bodyDef).CreateFixture(fixtureDef);
+
+
+
+            var debugDraw = new b2DebugDraw();
+            debugDraw.SetSprite(document.getElementById("canvas").getContext("2d"));
+            debugDraw.SetDrawScale(1.0);
+            debugDraw.SetFillAlpha(0.5);
+            debugDraw.SetLineThickness(1.0);
+            debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+            world.SetDebugDraw(debugDraw);
+
+            world.DrawDebugData();
+
+
+
+    	}
+
+    	window.onload = onloader;
+
+
+    </script>
+    
+</head>
+<body>
+    <!--<div id="container" style="border:1px red solid;"></div>-->
+    <canvas id="canvas" width="600" height="600" style="background-color:#333333;" ></canvas>
+    <div id="viewport"></div>
+</body>
+</html>
