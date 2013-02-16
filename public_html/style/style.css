@@ -1,0 +1,11 @@
+body{
+	padding:0px;
+	margin:0px;
+	overflow:hidden;
+}
+#container>div{
+	border: 1px red solid;
+}
+#container{
+	border: 1px lightblue solid;	
+}

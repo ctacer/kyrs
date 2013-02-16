@@ -39,22 +39,22 @@
          bodyDef.type = b2Body.b2_staticBody;
          fixDef.shape = new b2PolygonShape;
          fixDef.shape.SetAsBox(20, 2);
-         bodyDef.position.Set(10, 400 / 30  - 2);
+         bodyDef.position.Set(10, 400 / 30 + 1.8);
          world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-         bodyDef.position.Set(10, 0);
+         bodyDef.position.Set(10, -1.8);
          world.CreateBody(bodyDef).CreateFixture(fixDef);
-/*
+
          fixDef.shape.SetAsBox(2, 14);
          bodyDef.position.Set(-1.8, 13);
          world.CreateBody(bodyDef).CreateFixture(fixDef);
 
          bodyDef.position.Set(21.8, 13);
          world.CreateBody(bodyDef).CreateFixture(fixDef);
-         */
+         
          
          //create some objects
-         /*bodyDef.type = b2Body.b2_dynamicBody;
+         bodyDef.type = b2Body.b2_dynamicBody;
          for(var i = 0; i < 10; ++i) {
             if(Math.random() > 0.5) {
                fixDef.shape = new b2PolygonShape;
@@ -70,13 +70,13 @@
             bodyDef.position.x = Math.random() * 10;
             bodyDef.position.y = Math.random() * 10;
             world.CreateBody(bodyDef).CreateFixture(fixDef);
-         }*/
+         }
          
          //setup debug draw
          
          var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(document.getElementById("canvas").getContext("2d"));
-			debugDraw.SetDrawScale(1.0);
+			debugDraw.SetDrawScale(30.0);
 			debugDraw.SetFillAlpha(0.5);
 			debugDraw.SetLineThickness(1.0);
 			debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
@@ -85,13 +85,15 @@
          world.DrawDebugData();
          
          //window.setInterval(update, 1000 / 60);
+         update();
          
          //mouse
-         /*
-         var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
-         var canvasPosition = getElementPosition(document.getElementById("canvas"));
          
-         document.addEventListener("mousedown", function(e) {
+         var mouseX, mouseY, mousePVec, isMouseDown, selectedBody, mouseJoint;
+         //var canvasPosition = getElementPosition(document.getElementById("canvas"));
+         
+         /*document.addEventListener("mousedown", function(e) {
+            console.log('mousedown');
             isMouseDown = true;
             handleMouseMove(e);
             document.addEventListener("mousemove", handleMouseMove, true);
@@ -107,8 +109,8 @@
          function handleMouseMove(e) {
             mouseX = (e.clientX - canvasPosition.x) / 30;
             mouseY = (e.clientY - canvasPosition.y) / 30;
-         };
-         
+         };*/
+         /*
          function getBodyAtMouse() {
             mousePVec = new b2Vec2(mouseX, mouseY);
             var aabb = new b2AABB();
@@ -131,12 +133,13 @@
             }
             return true;
          }
-         
+         */
          //update
          
          function update() {
-         
+         /*
             if(isMouseDown && (!mouseJoint)) {
+               console.log('1');
                var body = getBodyAtMouse();
                if(body) {
                   var md = new b2MouseJointDef();
@@ -151,6 +154,7 @@
             }
             
             if(mouseJoint) {
+               console.log('2');
                if(isMouseDown) {
                   mouseJoint.SetTarget(new b2Vec2(mouseX, mouseY));
                } else {
@@ -158,7 +162,8 @@
                   mouseJoint = null;
                }
             }
-         
+         */
+            requestAnimationFrame(update);
             world.Step(1 / 60, 10, 10);
             world.DrawDebugData();
             world.ClearForces();
@@ -167,7 +172,7 @@
          //helpers
          
          //http://js-tut.aardon.de/js-tut/tutorial/position.html
-         function getElementPosition(element) {
+         /*function getElementPosition(element) {
             var elem=element, tagname="", x=0, y=0;
            
             while((typeof(elem) == "object") && (typeof(elem.tagName) != "undefined")) {
@@ -185,8 +190,8 @@
             }
 
             return {x: x, y: y};
-         }
-*/
+         }*/
+
 
       };
    
