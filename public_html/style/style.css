@@ -9,3 +9,15 @@ body{
 #container{
 	border: 1px lightblue solid;	
 }
+#meter{
+	position: absolute;
+	top: 1px;
+	left: 603px;
+	width: 10px;
+	height: 600px;
+	border: 1px black solid;
+}
+.meter_one{
+	height: 100px;
+	width: 100%;	
+}

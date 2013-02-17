@@ -18,10 +18,14 @@ function setPhysicWorld(){
             ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
             ;
 
+            var scaller = 50; 
+
             var world = new b2World(
-               new b2Vec2(0, 10)    //gravity
+               new b2Vec2(0, scaller*10)    //gravity
             ,  true                 //allow sleep
             );
+
+            
 
 
             var fixtureDef = new b2FixtureDef();
@@ -35,35 +39,52 @@ function setPhysicWorld(){
 
             //top wall
             fixtureDef.shape = new b2PolygonShape();
-            fixtureDef.shape.SetAsBox(10,0.2);
-            bodyDef.position.Set(10,0.1);
+            fixtureDef.shape.SetAsBox(10,scaller*0.2);
+            bodyDef.position.Set(scaller*10,scaller*0.1);
             world.CreateBody(bodyDef).CreateFixture(fixtureDef);
 
             //bottom wall
-            bodyDef.position.Set(10,20-0.1);
+            bodyDef.position.Set(scaller*10,scaller*20-scaller*0.1-64/30);
             world.CreateBody(bodyDef).CreateFixture(fixtureDef);
 
             //right wall
             fixtureDef.shape = new b2PolygonShape();
-            fixtureDef.shape.SetAsBox(0.2,10);
-            bodyDef.position.Set(20-0.1,10);
+            fixtureDef.shape.SetAsBox(scaller*0.2,scaller*10);
+            bodyDef.position.Set(scaller*20-scaller*0.1,scaller*10);
             world.CreateBody(bodyDef).CreateFixture(fixtureDef);
 
             //left wall
-            bodyDef.position.Set(0.1,10);
+            bodyDef.position.Set(scaller*0.1,scaller*10);
             world.CreateBody(bodyDef).CreateFixture(fixtureDef);
+
+
+
+            /*fixtureDef.shape = new b2PolygonShape();
+            console.log(fixtureDef.shape);
+            fixtureDef.shape.SetAsArray([new b2Vec2(0,0),new b2Vec2(100,0),new b2Vec2(0,100)],3);
+            console.log(fixtureDef.shape.GetVertices());*/
+            /*var ar = fixtureDef.shape.GetVertices();
+                  var arr = [];
+                  for (var i = 0; i < ar.length; i++) {
+                        arr.push(ar[i].x);
+                        arr.push(ar[i].y);
+                  };
+               console.log(arr);*/ 
 
 
             //create a ball
             bodyDef.type = b2Body.b2_dynamicBody;
             fixtureDef.shape = new b2CircleShape();
-            fixtureDef.shape.SetRadius(1);
+            fixtureDef.shape.SetRadius(scaller*1);
 
-            bodyDef.position.Set(10,1);
+
+
+            bodyDef.position.Set(scaller*19,scaller*100/30);
             var ball = world.CreateBody(bodyDef);
             ball.CreateFixture(fixtureDef);
+            console.log(ball.GetFixtureList().GetShape().GetType());
             APP.ball = ball;
-           
+            
 
             var debugDraw = new b2DebugDraw();
             debugDraw.SetSprite(document.getElementsByTagName("canvas")[0].getContext("2d"));
