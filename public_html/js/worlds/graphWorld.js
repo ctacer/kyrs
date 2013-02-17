@@ -6,8 +6,10 @@ function startRenderin(){
 
 	// I decided that 2 meter = 100 pixels
 
-var start =0,end =0;
-console.log(APP.world.GetGravity());
+var start =Date.now(),end =0,pox = 0, posy = 0;
+console.log(APP.ball.GetPosition().y);
+
+
 	function render(){
         requestAnimFrame(render);
         APP.stats.update();
@@ -19,13 +21,20 @@ console.log(APP.world.GetGravity());
             var body  = APP.ball;
             var actor = APP.circle;            
             var p = body.GetPosition();
-            actor.setPosition( p.x *30 ,p.y *30);	// updating actor            
-            actor.setRadius(body.GetFixtureList().GetShape().GetRadius()*30);
+            actor.setPosition( p.x  ,p.y );	// updating actor            
+            actor.setRadius(body.GetFixtureList().GetShape().GetRadius());
             actor.setRotation( body.GetAngle()*180/Math.PI );
+
+
+             
+            if(Math.floor(p.y) - Math.floor(posy) == 0)
+            {
+            	//console.log(p.y);
+            	//console.log((Date.now() - start)/1000);
+            }
+            posy = p.y;
+            //console.log(p.y);
             
-            if(p.y*30 < 101)start = Date.now();
-            if(p.y*30 > 496 && p.y*30 < 497){end = Date.now();
-            console.log((end-start)/1000);}
             //APP.stage.draw();
         
         APP.world.ClearForces();

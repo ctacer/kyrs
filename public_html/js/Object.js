@@ -5,6 +5,8 @@ function DynamicObject(world){
 
 
 	this.world = world;
+	this.phys = [];
+	this.parts = [];
 	
 	this.setPhysic = function(b2shape,pos){
 
@@ -13,14 +15,15 @@ function DynamicObject(world){
 	    bodydef.position.Set(pos.x, pos.y);
 
 	    var fixtureDef = new b2FixtureDef();
-        fixtureDef.density = 1;
+        fixtureDef.density = 50;
         fixtureDef.friction = 0.5;
         fixtureDef.restitution = 0.2;
         fixtureDef.shape = b2shape;
 
 	    var body = this.world.CreateBody(bodydef);
 	    body.CreateFixture(fixtureDef);
-	    this.phys = [];
+	    
+	    
 	    this.phys.push(body);	
 
 	    this.setGraphic(this.phys.length - 1);
@@ -73,7 +76,7 @@ function DynamicObject(world){
 			});
 		}
 
-		this.parts = [];
+		
 		this.parts.push(shape);
 
 
@@ -102,7 +105,8 @@ function DynamicObject(world){
 function StaticObject(world){
 	
 	this.world = world;
-
+	this.phys = [];
+	this.parts = [];
 
 	this.setPhysic = function(b2shape,pos){
 
@@ -118,7 +122,7 @@ function StaticObject(world){
 
 	    var body = this.world.CreateBody(bodydef);
 	    body.CreateFixture(fixtureDef);
-	    this.phys = [];
+	    
 	    this.phys.push(body);	
 
 	    this.setGraphic(this.phys.length - 1);
@@ -163,6 +167,7 @@ function StaticObject(world){
 				arr.push(ar[i].x);
 				arr.push(ar[i].y);
 			};
+			//console.log(arr);
 			shape = new Kinetic.Polygon({
 				points: arr,
 				fill: 'blue',
@@ -171,7 +176,7 @@ function StaticObject(world){
 			});
 		}
 
-		this.parts = [];
+		
 		this.parts.push(shape);
 
 
@@ -197,7 +202,7 @@ function StaticObject(world){
 
 
 
-function Object (world,type_){
+function PGObject (world,type_){
 
 	if(type_.toUpperCase() == "STATIC"){
 		return new StaticObject(world);

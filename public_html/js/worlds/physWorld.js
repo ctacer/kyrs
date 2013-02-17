@@ -18,7 +18,7 @@ function setPhysicWorld(){
             ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
             ;
 
-            var scaller = 50; 
+            var scaller = 30; 
 
             var world = new b2World(
                new b2Vec2(0, scaller*10)    //gravity
@@ -39,7 +39,7 @@ function setPhysicWorld(){
 
             //top wall
             fixtureDef.shape = new b2PolygonShape();
-            fixtureDef.shape.SetAsBox(10,scaller*0.2);
+            fixtureDef.shape.SetAsBox(10*scaller,scaller*0.2);
             bodyDef.position.Set(scaller*10,scaller*0.1);
             world.CreateBody(bodyDef).CreateFixture(fixtureDef);
 
@@ -88,7 +88,7 @@ function setPhysicWorld(){
 
             var debugDraw = new b2DebugDraw();
             debugDraw.SetSprite(document.getElementsByTagName("canvas")[0].getContext("2d"));
-            debugDraw.SetDrawScale(30.0);
+            debugDraw.SetDrawScale(1.0);
             debugDraw.SetFillAlpha(0.5);
             debugDraw.SetLineThickness(1.0);
             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
