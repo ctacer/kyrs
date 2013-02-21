@@ -13,7 +13,8 @@ function DynamicObject(world,pxTmtr){
 
 		var bodydef = new b2BodyDef();
 		bodydef.type = b2Body.b2_dynamicBody;
-	    bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
+		if(pos)
+	    	bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
 
 	    var fixtureDef = new b2FixtureDef();
         fixtureDef.density = 1;
@@ -43,11 +44,81 @@ function DynamicObject(world,pxTmtr){
 
 	    //this.setGraphic(this.phys.length - 1);
 	}
-/*
-	this.addPhysic = function(){
+
+	this.JointBodys = function(_type,i,j,opt){
+
+		if(!this.phys[i] || !this.phys[j])return;
+
+		var jointDef,joint;
+
+		 switch (_type.toUpperCase() ){
+		 	case "DISTANCE":
+		 		jointDef = new b2DistanceJointDef();
+		 		jointDef.Initialize(this.phys[i],this.phys[j],this.phys[i].GetWorldCenter(),this.phys[j].GetWorldCenter() );
+		 		jointDef.collideConnected = true;
+		 		joint = this.world.CreateJoint(jointDef);
+		 		break;
+		 	case "REVOLUTE":
+		 		jointDef = new b2RevoluteJointDef();
+		 		if(opt.grBody){
+			 		jointDef.Initialize(this.phys[i],opt.grBody,this.phys[i].GetWorldCenter() );
+			 		jointDef.lowerAngle = -0.3*Box2D.Common.b2Settings.b2_pi;
+			 		jointDef.upperAngle = 0.3*Box2D.Common.b2Settings.b2_pi;
+			 		/*
+					jointDef.motorSpeed = 0.0f;
+					jointDef.enableMotor = true;
+			 		jointDef.enableLimit = true;
+					jointDef.maxMotorTorque = 1;
+					*/
+			 		joint = this.world.CreateJoint(jointDef);
+		 		}		 		
+		 		break;
+		 	case "PULLEY":
+		 		jointDef = new b2PulleyJointDef();
+				var groundAnchor1 = new b2Vec2(5, 0);
+				var groundAnchor2 = new b2Vec2(6, 12);
+				var ratio = 1;				
+				jointDef.Initialize(this.phys[i],this.phys[j], groundAnchor1, groundAnchor2, this.phys[i].GetWorldCenter(),this.phys[j].GetWorldCenter(), ratio);
+				/*
+				jointDef.maxLength1 = 4;
+				jointDef.maxLength2 = 4;
+				*/
+		 		joint = this.world.CreateJoint(jointDef);
+		 		break;
+		 	case "PRISMATIC":
+		 		jointDef = new b2PrismaticJointDef();
+		 		jointDef.Initialize(this.phys[i],this.phys[j],this.phys[i].GetWorldCenter(), new b2Vec2(0,1) );		 		
+		 					
+				jointDef.lowerTranslation = -2.5;
+				jointDef.upperTranslation = 2.5;
+				/*
+				jointDef.enableLimit = true;
+				jointDef.maxMotorForce = 1.0f;
+				jointDef.motorSpeed = 0.0f;
+				jointDef.enableMotor = true;
+				*/
+		 		joint = this.world.CreateJoint(jointDef);
+		 		break;
+		 	default:
+		 		console.log("Invalid Joint Type!<Object.js:JointBodys():method>");
+		 		break;
+		 }
+
+
+/*		
+		try{
+			jointDef = eval("new b2" + _type + "JointDef();");
+		}
+		catch(er){
+			console.log(er);
+			return;
+		}
+
+		*/
+
+
 
 	}
-*/
 	
 	this.bindStage = function(stage){
 		this.layer = new Kinetic.Layer();
@@ -81,7 +152,7 @@ function DynamicObject(world,pxTmtr){
 				x: this.phys[i].GetPosition().x*this.PixelToMeter,
 				y: this.phys[i].GetPosition().y*this.PixelToMeter,
 				radius: this.phys[i].GetFixtureList().GetShape().GetRadius()*this.PixelToMeter,
-				fill: 'red',
+				fill: '#FF0000',
 		        stroke: 'black',
 		        strokeWidth: 1
 			});
@@ -89,9 +160,9 @@ function DynamicObject(world,pxTmtr){
 		if(this.phys[i].GetFixtureList().GetShape().GetType() == 1){
 			var ar = this.phys[i].GetFixtureList().GetShape().GetVertices();
 			var arr = [];
-			for (var i = 0; i < ar.length; i++) {
-				arr.push(ar[i].x*this.PixelToMeter);
-				arr.push(ar[i].y*this.PixelToMeter);
+			for (var j = 0; j < ar.length; j++) {
+				arr.push(ar[j].x*this.PixelToMeter);
+				arr.push(ar[j].y*this.PixelToMeter);
 			};
 			shape = new Kinetic.Polygon({
 				points: arr,
@@ -114,7 +185,7 @@ function DynamicObject(world,pxTmtr){
 		for (var i = 0; i < this.parts.length; i++) {			
 			var pos = this.phys[i].GetPosition();
 			this.parts[i].setPosition( pos.x*this.PixelToMeter, pos.y*this.PixelToMeter );
-            this.parts[i].setRotation( this.phys[i].GetAngle()*180/Math.PI );
+            this.parts[i].setRotation( this.phys[i].GetAngle());
 		};
 	}
 
@@ -138,7 +209,8 @@ function StaticObject(world,pxTmtr){
 
 		var bodydef = new b2BodyDef();
 		bodydef.type = b2Body.b2_staticBody;
-	    bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
+		if(pos)
+	    	bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
 
 	    var fixtureDef = new b2FixtureDef();
         fixtureDef.density = 1;

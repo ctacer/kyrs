@@ -16,7 +16,18 @@ function definePhysicWorld() {
     ,   b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
     ,   b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
     ,   b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-    ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef ;
+    ,   b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef 
+    ,   b2DistanceJoint = Box2D.Dynamics.Joints.b2DistanceJoint
+    ,   b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
+    ,   b2RevoluteJoint = Box2D.Dynamics.Joints.b2RevoluteJoint
+    ,   b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef
+    ,   b2PulleyJoint = Box2D.Dynamics.Joints.b2PulleyJoint
+    ,   b2PulleyJointDef = Box2D.Dynamics.Joints.b2PulleyJointDef
+    ,   b2PrismaticJoint = Box2D.Dynamics.Joints.b2PrismaticJoint
+    ,   b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef 
+    ,   b2Joint = Box2D.Dynamics.Joints.b2Joint
+    ,   b2JointDef = Box2D.Dynamics.Joints.b2JointDef  ;
+                
 
 
 
@@ -31,12 +42,30 @@ function definePhysicWorld() {
     var h = window.innerHeight;
 	
     //define world objects
+
+    var shape;
+
+    var cub = new PGObject(world,"dynamic",PixelToMeter);
+
+    shape = new b2PolygonShape();
+    shape.SetAsArray([new b2Vec2(w/2+30,180),new b2Vec2(w/2+30,240),new b2Vec2(w/2-30,240),new b2Vec2(w/2-30,180)],4); 
+
+    cub.setPhysic(shape);
     
     var ball = new PGObject(world,"dynamic",PixelToMeter);    
 
-    var shape = new b2CircleShape();
+    shape = new b2CircleShape();
     shape.SetRadius(50);
     ball.setPhysic(shape,{x:w/2,y:100});  
+
+    //distance ball body
+    shape.SetRadius(40);
+    ball.setPhysic( shape,{x:w/2-200,y:120} );
+    ball.JointBodys('DISTANCE',0,1);
+
+    var playee = new Player(PixelToMeter);
+    playee.setPhysic(world, {x: 100, y: 200});
+
 
     
 
@@ -57,6 +86,9 @@ function definePhysicWorld() {
     var os = [];
     os.push(ball);
     os.push(wall);
+    os.push(cub);
+    os.push(playee);
+    
 
 
     return {os:os,world:world,width:w,height:h,pixelToMeter:PixelToMeter};
