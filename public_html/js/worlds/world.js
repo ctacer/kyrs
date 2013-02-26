@@ -26,7 +26,8 @@ function definePhysicWorld() {
     ,   b2PrismaticJoint = Box2D.Dynamics.Joints.b2PrismaticJoint
     ,   b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef 
     ,   b2Joint = Box2D.Dynamics.Joints.b2Joint
-    ,   b2JointDef = Box2D.Dynamics.Joints.b2JointDef  ;
+    ,   b2JointDef = Box2D.Dynamics.Joints.b2JointDef  
+    ,   b2WeldJointDef = Box2D.Dynamics.Joints.b2WeldJointDef    ;
                 
 
 
@@ -45,26 +46,61 @@ function definePhysicWorld() {
 
     var shape;
 
-    var cub = new PGObject(world,"dynamic",PixelToMeter);
-
-    shape = new b2PolygonShape();
-    shape.SetAsArray([new b2Vec2(w/2+30,180),new b2Vec2(w/2+30,240),new b2Vec2(w/2-30,240),new b2Vec2(w/2-30,180)],4); 
-
-    cub.setPhysic(shape);
     
-    var ball = new PGObject(world,"dynamic",PixelToMeter);    
-
-    shape = new b2CircleShape();
-    shape.SetRadius(50);
-    ball.setPhysic(shape,{x:w/2,y:100});  
-
-    //distance ball body
-    shape.SetRadius(40);
-    ball.setPhysic( shape,{x:w/2-200,y:120} );
-    ball.JointBodys('DISTANCE',0,1);
-
+/*
     var playee = new Player(PixelToMeter);
     playee.setPhysic(world, {x: 100, y: 200});
+*/
+/*
+    var playee = new Persona(PixelToMeter);
+    playee.Initialize(world, {x: 100, y: 200});
+*/
+
+       
+
+    var b1,b2,joint;
+    var jointExperimentDef = new b2BodyDef();
+    jointExperimentDef.type = b2Body.b2_staticBody;
+
+    var jointExperimentFixture = new b2FixtureDef();
+    jointExperimentFixture.density = 1;
+    jointExperimentFixture.friction = 0.5;
+    jointExperimentFixture.restitution = 0.2;
+
+    var jointExperimentCubeShape = new b2PolygonShape();
+    jointExperimentCubeShape.SetAsBox(2,1);
+    jointExperimentDef.position.Set(2,6);
+
+    jointExperimentFixture.shape = jointExperimentCubeShape;
+    b1 = world.CreateBody(jointExperimentDef);
+    b1.CreateFixture(jointExperimentFixture);
+
+    jointExperimentDef.type = b2Body.b2_dynamicBody;
+
+    var jointExperimentCircleShape = new b2CircleShape();
+    jointExperimentCircleShape.SetRadius(1);
+    jointExperimentDef.position.Set(4,5);
+
+    jointExperimentFixture.shape = jointExperimentCircleShape;
+    b2 = world.CreateBody(jointExperimentDef);
+    b2.CreateFixture(jointExperimentFixture);
+
+    
+
+    var revoluteJointDef = new  b2RevoluteJointDef();
+    revoluteJointDef.Initialize(b2, b1, b2.GetWorldCenter());
+     
+    revoluteJointDef.maxMotorTorque = 1.0;
+    revoluteJointDef.enableMotor = true;
+
+    revoluteJointDef.maxMotorTorque = 20;
+    revoluteJointDef.motorSpeed = - Math.PI; //1 turn per second counter-clockwise
+ 
+    world.CreateJoint(revoluteJointDef);
+
+     
+
+
 
 
     
@@ -83,14 +119,12 @@ function definePhysicWorld() {
     wall.setPhysic(pol2,{x:0,y:0});
 
 
-    var os = [];
-    os.push(ball);
+    var os = [];    
     os.push(wall);
-    os.push(cub);
-    os.push(playee);
+    //os.push(playee);
     
+  
 
-
-    return {os:os,world:world,width:w,height:h,pixelToMeter:PixelToMeter};
+    return {os:os,world:world,width:window.innerWidth,height:window.innerHeight,pixelToMeter:PixelToMeter};
 
 }

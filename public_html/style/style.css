@@ -21,9 +21,9 @@ body{
 	height: 100px;
 	width: 100%;	
 }
-.DebugCanvas{
+#DebugCanvas{
 	position: absolute;
 	left: 0px;
-	top: 30%;
-	border: 1px red solid;
+	top: 0%;
+	border: 1px green solid;
 }

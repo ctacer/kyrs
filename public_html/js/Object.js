@@ -33,7 +33,7 @@ function DynamicObject(world,pxTmtr){
 			}
 			b2shape.SetAsArray(ar);
         }
-
+        
         fixtureDef.shape = b2shape;
 
 	    var body = this.world.CreateBody(bodydef);

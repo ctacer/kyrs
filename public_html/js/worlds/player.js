@@ -26,37 +26,18 @@ function Player(pxTmtr){
         bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
 
         shape = new b2PolygonShape();
-        shape.SetAsBox(0.2,0.2);
+        shape.SetAsBox(0.3,0.3);
 
         fixtureDef.shape = shape;
 
         var body = world.CreateBody(bodydef);
         body.CreateFixture(fixtureDef);
 
-        //this.phys.push({body:body,tittle:'body', color: "#00FF00"});
-
-
-
-        //define neak body
-	    //bodydef.position.Set( 0, 0 );
-
-	    shape = new b2PolygonShape();
-	    shape.SetAsBox(0.1,0.4);	    
-	    //shape.SetAsArray( [new b2Vec2(p.x-0.2,p.y-0.2),new b2Vec2(p.x,p.y-0.25),new b2Vec2(p.x+0.2,p.y-0.2)], 3);
-
-	    fixtureDef.shape = shape;
-
-	    //var neak = world.CreateBody(bodydef);
-	    body.CreateFixture(fixtureDef);
-
-	    this.phys.push({body:body,tittle:'body', color: "#00FF00"});	    
-
-	    //this.phys.push( {body:neak, tittle:'neak', color: "#FFFF00"} );
-
+        this.phys.push({body:body,tittle:'body', color: "#00FF00"});
 
 
         //define head body
-		bodydef.position.Set( p.x, p.y - 0.45 );
+		bodydef.position.Set( p.x, p.y - 0.55 );
 	    
         shape = new b2CircleShape();
         shape.SetRadius(0.2);       
@@ -68,42 +49,17 @@ function Player(pxTmtr){
 
 	    this.phys.push({body:head,tittle:'head', color: "#FF00FF"});
 
-
-
-        //define left hand body
-        bodydef.position.Set( p.x - 0.225, p.y );
-
-        shape = new b2PolygonShape();
-        shape.SetAsBox(0.05,0.18);
-
-        fixtureDef.shape = shape;
-
-        var leftHand = world.CreateBody(bodydef);
-        leftHand.CreateFixture(fixtureDef);
-
-        this.phys.push({body:leftHand,tittle:'left hand', color: "#FF0000"});
-
-
-        //define right hand body
-        bodydef.position.Set( p.x + 0.225, p.y );
-
-        shape = new b2PolygonShape();
-        shape.SetAsBox(0.05,0.18);
-
-        fixtureDef.shape = shape;
-
-        var rightHand = world.CreateBody(bodydef);
-        rightHand.CreateFixture(fixtureDef);
-
-        this.phys.push({body:rightHand,tittle:'right hand', color: "#0000FF"});
-
+	    var weldJointDef = new b2WeldJointDef();
+		weldJointDef.Initialize(body, head, body.GetWorldCenter());
+		 
+		world.CreateJoint(weldJointDef);
 
 
         //define left leg body
-        bodydef.position.Set( p.x - 0.1, p.y + 0.3 );
+        bodydef.position.Set( p.x - 0.1, p.y + 0.37 );
 
         shape = new b2PolygonShape();
-        shape.SetAsBox(0.1,0.2);
+        shape.SetAsBox(0.07,0.1);
 
         fixtureDef.shape = shape;
 
@@ -114,10 +70,10 @@ function Player(pxTmtr){
 
 
         //define right leg body
-        bodydef.position.Set( p.x + 0.1, p.y + 0.3 );
+        bodydef.position.Set( p.x + 0.05, p.y + 0.37 );
 
         shape = new b2PolygonShape();
-        shape.SetAsBox(0.1,0.2);
+        shape.SetAsBox(0.07,0.1);
 
         fixtureDef.shape = shape;
 
@@ -145,13 +101,12 @@ function Player(pxTmtr){
 
 		
 		var shape;
+		
 
-		console.log(this.phys);
 		for (var i = 0; i < this.phys.length; i++) {
 
+			if(this.phys[i].body.GetFixtureList().GetShape().GetType() == 0){
 			
-			if(this.phys[i].tittle == 'head'){
-				
 				shape = new Kinetic.Circle({
 					x: this.phys[i].body.GetPosition().x*this.PixelToMeter,
 					y: this.phys[i].body.GetPosition().y*this.PixelToMeter,
@@ -161,26 +116,8 @@ function Player(pxTmtr){
 			        strokeWidth: 1
 				});
 			}			
-			else{
+			if(this.phys[i].body.GetFixtureList().GetShape().GetType() == 1){
 				var ar=this.phys[i].body.GetFixtureList().GetShape().GetVertices();
-
-				for (var f = this.phys[i].body.GetFixtureList(); f; f = f.GetNext())
-				{
-					if(f.GetNext()){
-						f = f.GetNext();
-						
-						for (var i = 0; i < f.GetShape().GetVertices().length; i++) {
-							ar.push(f.GetShape().GetVertices()[i]);
-						}
-						
-						console.log(ar);
-					}
-				      //do something with the fixture 'f'
-				}
-				
-
-				
-				//var ar = this.phys[i].body.GetFixtureList().GetShape().GetVertices();
 				var arr = [];
 				for (var j = 0; j < ar.length; j++) {
 					arr.push(ar[j].x*this.PixelToMeter);
@@ -193,10 +130,11 @@ function Player(pxTmtr){
 			        strokeWidth: 1
 				});
 			}
-					
+			
 
-			this.parts.push(shape);
 			layer.add(shape);
+			this.parts.push(shape);
+			
 
 		}
 
@@ -206,11 +144,13 @@ function Player(pxTmtr){
 
 	this.updateObj = function (){
 		
-		for (var i = 0; i < this.parts.length; i++) {			
+		
+		for (var i = 0; i < this.parts.length; i++) {	
+			
 			var pos = this.phys[i].body.GetPosition();
 			this.parts[i].setPosition( pos.x*this.PixelToMeter, pos.y*this.PixelToMeter );
-            this.parts[i].setRotation( this.phys[i].body.GetAngle() );
-		};
+	        this.parts[i].setRotation( this.phys[i].body.GetAngle() );					
+		}
 	}
 
 	

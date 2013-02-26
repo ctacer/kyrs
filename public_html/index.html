@@ -2,14 +2,33 @@
 <html>
 <head>
 
-    <script type="text/javascript" src="js/stats.min.js"></script>
-    <script type="text/javascript" src="js/Box2dWeb-2.1.a.3.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="style/style.css"/>
+    <script type="text/javascript" src="js/libs/stats.min.js"></script>
+    <script type="text/javascript" src="js/libs/RequestAnimFrame.js"></script>
+    <script type="text/javascript" src="js/libs/Box2dWeb-2.1.a.3.min.js"></script>
+    <script type="text/javascript" src="js/libs/kinetic-v4.3.3.min.js"></script>
+
+    <script type="text/javascript" src="js/Object.js"></script>
+    <script type="text/javascript" src="js/worlds/player.js"></script>
+    <script type="text/javascript" src="js/worlds/Persona.js"></script>
+    <script type="text/javascript" src="js/Renderer.js"></script>   
+    <script type="text/javascript" src="js/worlds/world.js"></script>
+    <script type="text/javascript" src="js/worlds/graphic.js"></script>
+    <script type="text/javascript" src="js/core.js"></script>
+
     
+<!--
+    <script type="text/javascript" src="js/worlds/physWorld.js"></script>
+    <script type="text/javascript" src="js/worlds/graphWorld.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+ -->   
+
+ 
 </head>
 <body>
-    <!--<div id="container" style="border:1px red solid;"></div>-->
-    <canvas id="canvas" width="600" height="400" style="background-color:#333333;" ></canvas>
+    <div id="container"></div>
+    <!--<canvas id="canvas" width="600" height="600" style="background-color:#333333;" ></canvas>-->
     <div id="viewport"></div>
+     <canvas id="DebugCanvas" width="1280" height="800"></canvas>
 </body>
 </html>

@@ -7,16 +7,10 @@ function Renderer (world,stage,pxTmtr){
 
 	this.createDebuger = function(){
 
-		var debugDraw = new b2DebugDraw();
+			var debugDraw = new b2DebugDraw();		
 
-		var newCanvas = document.createElement('canvas');
-		newCanvas.className = "DebugCanvas";
-		newCanvas.style.width = 10*this.stage.getWidth()/this.PixelToMeter + "px";
-		newCanvas.style.height = 10*this.stage.getHeight()/this.PixelToMeter + "px";
-		document.body.appendChild(newCanvas);
-
-            debugDraw.SetSprite(newCanvas.getContext("2d"));
-            debugDraw.SetDrawScale(10.0);
+            debugDraw.SetSprite(document.getElementById('DebugCanvas').getContext("2d"));
+            debugDraw.SetDrawScale(50.0);
             debugDraw.SetFillAlpha(0.5);
             debugDraw.SetLineThickness(1.0);
             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
@@ -52,18 +46,18 @@ function Renderer (world,stage,pxTmtr){
 		/*var start = { t: Date.now() , y:self.objs[0].parts[0].getPosition().y };
 		var cur = { t: Date.now() , y:100 };*/
 
-/*
+
 		if(!this.debug)
 			func();
 		else
 			deb();
-*/
-		func();
+
+		//func();
 
 
 		function func(){
 	        requestAnimFrame(func);
-
+	        console.log('sd');
 	        if(self.stats)
 	        	self.stats.update();
 	                
@@ -89,7 +83,7 @@ function Renderer (world,stage,pxTmtr){
 
 	    function deb(){
 	        requestAnimFrame(deb);
-
+	        console.log('sd');
 	        if(self.stats)
 	        	self.stats.update();
 	                
