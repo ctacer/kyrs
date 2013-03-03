@@ -51,52 +51,14 @@ function definePhysicWorld() {
     var playee = new Player(PixelToMeter);
     playee.setPhysic(world, {x: 100, y: 200});
 */
-/*
+
     var playee = new Persona(PixelToMeter);
     playee.Initialize(world, {x: 100, y: 200});
-*/
+
 
        
 
-    var b1,b2,joint;
-    var jointExperimentDef = new b2BodyDef();
-    jointExperimentDef.type = b2Body.b2_staticBody;
-
-    var jointExperimentFixture = new b2FixtureDef();
-    jointExperimentFixture.density = 1;
-    jointExperimentFixture.friction = 0.5;
-    jointExperimentFixture.restitution = 0.2;
-
-    var jointExperimentCubeShape = new b2PolygonShape();
-    jointExperimentCubeShape.SetAsBox(2,1);
-    jointExperimentDef.position.Set(2,6);
-
-    jointExperimentFixture.shape = jointExperimentCubeShape;
-    b1 = world.CreateBody(jointExperimentDef);
-    b1.CreateFixture(jointExperimentFixture);
-
-    jointExperimentDef.type = b2Body.b2_dynamicBody;
-
-    var jointExperimentCircleShape = new b2CircleShape();
-    jointExperimentCircleShape.SetRadius(1);
-    jointExperimentDef.position.Set(4,5);
-
-    jointExperimentFixture.shape = jointExperimentCircleShape;
-    b2 = world.CreateBody(jointExperimentDef);
-    b2.CreateFixture(jointExperimentFixture);
-
     
-
-    var revoluteJointDef = new  b2RevoluteJointDef();
-    revoluteJointDef.Initialize(b2, b1, b2.GetWorldCenter());
-     
-    revoluteJointDef.maxMotorTorque = 1.0;
-    revoluteJointDef.enableMotor = true;
-
-    revoluteJointDef.maxMotorTorque = 20;
-    revoluteJointDef.motorSpeed = - Math.PI; //1 turn per second counter-clockwise
- 
-    world.CreateJoint(revoluteJointDef);
 
      
 

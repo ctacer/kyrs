@@ -3,104 +3,85 @@
 function Persona(pxTmtr){
 
 	this.PixelToMeter = pxTmtr || 50;
-	this.phys = [];
+	this.phys = {};
 	this.parts = [];
 	
 	this.Initialize = function(world,pos){
 
-		var bodydef = new b2BodyDef();
-		bodydef.type = b2Body.b2_dynamicBody;
+		var b1,b2,joint;
+	    var jointExperimentDef = new b2BodyDef();
+	    jointExperimentDef.type = b2Body.b2_dynamicBody;
+	    jointExperimentDef.fixedRotation = true;
 
-		var fixtureDef = new b2FixtureDef();
-        fixtureDef.density = 1;
-        fixtureDef.friction = 0.5;
-        fixtureDef.restitution = 0.2;
-        var shape;
+	    var jointExperimentFixture = new b2FixtureDef();
+	    jointExperimentFixture.density = 1;
+	    jointExperimentFixture.friction = 0.5;
+	    jointExperimentFixture.restitution = 0.2;
 
-        var p = {x:pos.x/this.PixelToMeter, y:pos.y/this.PixelToMeter};
+	    var jointExperimentCubeShape = new b2PolygonShape();
+	    jointExperimentCubeShape.SetAsBox(0.2,0.6);
+	    jointExperimentDef.position.Set(pos.x/this.PixelToMeter,pos.y/this.PixelToMeter);
+
+	    jointExperimentFixture.shape = jointExperimentCubeShape;
+	    b1 = world.CreateBody(jointExperimentDef);
+	    b1.CreateFixture(jointExperimentFixture);
+
+	    this.phys['box'] = b1;
+
+	    jointExperimentDef.type = b2Body.b2_dynamicBody;
+	    jointExperimentDef.fixedRotation = false;
+
+	    var jointExperimentCircleShape = new b2CircleShape();
+	    jointExperimentCircleShape.SetRadius(0.4);
+	    jointExperimentDef.position.Set(pos.x/this.PixelToMeter,pos.y/this.PixelToMeter + 0.6);
+
+	    jointExperimentFixture.shape = jointExperimentCircleShape;
+	    b2 = world.CreateBody(jointExperimentDef);
+	    b2.CreateFixture(jointExperimentFixture);
+
+	    this.phys['wheel'] = b2;
 
 
-        //define body of the body
-        bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
-
-        shape = new b2PolygonShape();
-        shape.SetAsBox( 0.3, 0.3 );
-
-        fixtureDef.shape = shape;
-
-        var body = world.CreateBody(bodydef);
-        body.CreateFixture(fixtureDef);
-
-        this.phys.push({body:body,tittle:'body', color: "#00FF00"});
-
-
-        //define head body
-		bodydef.position.Set( p.x, p.y - 0.55 );
 	    
-        shape = new b2CircleShape();
-        shape.SetRadius(0.2);       
 
-        fixtureDef.shape = shape;
+	    var revoluteJointDef = new  b2RevoluteJointDef();
+	    revoluteJointDef.Initialize(b2, b1, b2.GetWorldCenter());
+	    
+	    /* 
+	    revoluteJointDef.maxMotorTorque = 1.0;
+	    revoluteJointDef.enableMotor = true;
 
-	    var head = world.CreateBody(bodydef);
-	    head.CreateFixture(fixtureDef);	      
+	    revoluteJointDef.maxMotorTorque = 20;
+	    revoluteJointDef.motorSpeed =  -Math.PI; //1 turn per second counter-clockwise
+	 	*/
+	    world.CreateJoint(revoluteJointDef);
 
-	    this.phys.push({body:head,tittle:'head', color: "#FF00FF"});
+	    this.Listener();
 
-	    var weldJointDef = new b2WeldJointDef();
-		weldJointDef.Initialize(body, head, body.GetWorldCenter());
-		 
-		world.CreateJoint(weldJointDef);
+	}
 
+	this.Listener = function(){
 
-        //define left leg body
-        bodydef.position.Set( p.x - 0.1, p.y + 0.5 );
+		var self = this;
 
-        shape = new b2PolygonShape();
-        shape.SetAsBox(0.07,0.1);
+		window.addEventListener('keydown',function(event){
 
-        fixtureDef.shape = shape;
+			console.log(event.keyCode + "/t" + String.fromCharCode(event.keyCode));
+			if(event.keyCode == "37"){//left
+				self.phys['wheel'].SetAngularVelocity(-Math.PI);
+			}
+			if(event.keyCode == "38"){//up
+				self.phys['wheel'].ApplyImpulse( new b2Vec2(0,-1), self.phys['wheel'].GetWorldCenter() );
+				self.phys['box'].ApplyImpulse( new b2Vec2(0,-1), self.phys['box'].GetWorldCenter() );
+			}
+			if(event.keyCode == "39"){//right
+				self.phys['wheel'].ApplyTorque(Math.PI);
+			}
+			if(event.keyCode == "40"){//down
 
-        var leftLeg = world.CreateBody(bodydef);
-        leftLeg.CreateFixture(fixtureDef);
+			}
 
-        weldJointDef.Initialize(body, leftLeg, body.GetWorldCenter());		 
-		world.CreateJoint(weldJointDef);
-
-        this.phys.push({body:leftLeg,tittle:'left leg', color: "#FF00FF"});
-
-
-        //define right leg body
-        bodydef.position.Set( p.x + 0.05, p.y + 0.5 );
-
-        shape = new b2PolygonShape();
-        shape.SetAsBox(0.07,0.1);
-
-        fixtureDef.shape = shape;
-
-        var rightLeg = world.CreateBody(bodydef);
-        rightLeg.CreateFixture(fixtureDef);
-
-        weldJointDef.Initialize(body, rightLeg, body.GetWorldCenter());		 
-		world.CreateJoint(weldJointDef);
-
-        this.phys.push({body:rightLeg,tittle:'right leg', color: "#00FFFF"});
-
-        //define stabilizer body
-        bodydef.position.Set( p.x + 0.05, p.y + 0.5 );
-
-        shape = new b2PolygonShape();
-        shape.SetAsBox(0.07,0.1);
-
-        fixtureDef.shape = shape;
-
-        var rightLeg = world.CreateBody(bodydef);
-        rightLeg.CreateFixture(fixtureDef);
-
-        weldJointDef.Initialize(body, rightLeg, body.GetWorldCenter());		 
-		world.CreateJoint(weldJointDef);
-
-        this.phys.push({body:rightLeg,tittle:'right leg', color: "#00FFFF"});
+		},false);
 
 	}
 
