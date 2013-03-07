@@ -57,7 +57,7 @@ function Renderer (world,stage,pxTmtr){
 
 		function func(){
 	        requestAnimFrame(func);
-	        console.log('sd');
+	        //console.log('sd');
 	        if(self.stats)
 	        	self.stats.update();
 	                
@@ -83,7 +83,7 @@ function Renderer (world,stage,pxTmtr){
 
 	    function deb(){
 	        requestAnimFrame(deb);
-	        console.log('sd');
+	        //console.log('sd');
 	        if(self.stats)
 	        	self.stats.update();
 	                

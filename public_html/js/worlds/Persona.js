@@ -32,7 +32,7 @@ function Persona(pxTmtr){
 	    jointExperimentDef.fixedRotation = false;
 
 	    var jointExperimentCircleShape = new b2CircleShape();
-	    jointExperimentCircleShape.SetRadius(0.4);
+	    jointExperimentCircleShape.SetRadius(0.2);
 	    jointExperimentDef.position.Set(pos.x/this.PixelToMeter,pos.y/this.PixelToMeter + 0.6);
 
 	    jointExperimentFixture.shape = jointExperimentCircleShape;
@@ -66,16 +66,28 @@ function Persona(pxTmtr){
 
 		window.addEventListener('keydown',function(event){
 
-			console.log(event.keyCode + "/t" + String.fromCharCode(event.keyCode));
+			//console.log(event.keyCode + "/t" + String.fromCharCode(event.keyCode));
 			if(event.keyCode == "37"){//left
-				self.phys['wheel'].SetAngularVelocity(-Math.PI);
+				//console.log(self.phys['wheel']);
+				var velocity = self.phys['wheel'].GetLinearVelocity();
+				console.log(velocity);
+				//self.phys['wheel'].SetAngularVelocity(-2*Math.PI);
+				if(velocity.x >= -3.5)
+					self.phys['wheel'].ApplyTorque(-Math.PI);
 			}
 			if(event.keyCode == "38"){//up
+				//catch collide with ground body
+				
 				self.phys['wheel'].ApplyImpulse( new b2Vec2(0,-1), self.phys['wheel'].GetWorldCenter() );
 				self.phys['box'].ApplyImpulse( new b2Vec2(0,-1), self.phys['box'].GetWorldCenter() );
 			}
 			if(event.keyCode == "39"){//right
-				self.phys['wheel'].ApplyTorque(Math.PI);
+				var velocity = self.phys['wheel'].GetLinearVelocity();
+				console.log(velocity);
+				if(velocity.x <= 3.5)
+					self.phys['wheel'].ApplyTorque(Math.PI);
+				console.log(velocity);
+				
 			}
 			if(event.keyCode == "40"){//down
 

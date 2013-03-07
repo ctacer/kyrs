@@ -64,14 +64,14 @@ function definePhysicWorld() {
 
 
 
-
+    
     
 
     var wall = new PGObject(world,"static",PixelToMeter);
 
     var pol = new b2PolygonShape();
     pol.SetAsArray([new b2Vec2(0,h),new b2Vec2(0,h-40),
-        new b2Vec2(w,h-10),new b2Vec2(w,h)],4);
+        new b2Vec2(w,h-150),new b2Vec2(w,h)],4);
     wall.setPhysic(pol,{x:0,y:0});
 
     var pol2 = new b2PolygonShape();
@@ -79,6 +79,19 @@ function definePhysicWorld() {
         new b2Vec2(w,h),new b2Vec2(w-10,h)],4);
 
     wall.setPhysic(pol2,{x:0,y:0});
+
+    var pol3 = new b2PolygonShape();
+    pol3.SetAsArray([new b2Vec2(0,h),new b2Vec2(0,0),
+        new b2Vec2(10,0),new b2Vec2(10,h)],4);
+
+    wall.setPhysic(pol3,{x:0,y:0});   
+
+    var pol4 = new b2PolygonShape();
+    pol4.SetAsArray([new b2Vec2(0,0),new b2Vec2(w,0),
+        new b2Vec2(w,10),new b2Vec2(0,10)],4);
+
+    wall.setPhysic(pol4,{x:0,y:0});    
+
 
 
     var os = [];    
