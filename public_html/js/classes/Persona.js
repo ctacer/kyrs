@@ -8,53 +8,30 @@ function Persona(pxTmtr){
 	
 	this.Initialize = function(world,pos){
 
+		this.world = world;
+
+
 		var b1,b2,joint;
-	    var jointExperimentDef = new b2BodyDef();
-	    jointExperimentDef.type = b2Body.b2_dynamicBody;
-	    jointExperimentDef.fixedRotation = true;
-
-	    var jointExperimentFixture = new b2FixtureDef();
-	    jointExperimentFixture.density = 1;
-	    jointExperimentFixture.friction = 0.5;
-	    jointExperimentFixture.restitution = 0.2;
-
+	    
 	    var jointExperimentCubeShape = new b2PolygonShape();
 	    jointExperimentCubeShape.SetAsBox(0.2,0.6);
-	    jointExperimentDef.position.Set(pos.x/this.PixelToMeter,pos.y/this.PixelToMeter);
 
-	    jointExperimentFixture.shape = jointExperimentCubeShape;
-	    b1 = world.CreateBody(jointExperimentDef);
-	    b1.CreateFixture(jointExperimentFixture);
+	    b1 = this.getBody( {world:this.world, position:{x:pos.x/this.PixelToMeter, y:pos.y/this.PixelToMeter },
+				shape:jointExperimentCubeShape ,bodyProperty:{fixedRotation : true, userData:'player', linearDamping: 0.4} } );
 
+	    
 	    this.phys['box'] = b1;
-
-	    jointExperimentDef.type = b2Body.b2_dynamicBody;
-	    jointExperimentDef.fixedRotation = false;
 
 	    var jointExperimentCircleShape = new b2CircleShape();
 	    jointExperimentCircleShape.SetRadius(0.2);
-	    jointExperimentDef.position.Set(pos.x/this.PixelToMeter,pos.y/this.PixelToMeter + 0.6);
 
-	    jointExperimentFixture.shape = jointExperimentCircleShape;
-	    b2 = world.CreateBody(jointExperimentDef);
-	    b2.CreateFixture(jointExperimentFixture);
+	    b2 = this.getBody( {world:this.world, position:{x:pos.x/this.PixelToMeter, y:pos.y/this.PixelToMeter + 0.6 },
+				shape:jointExperimentCircleShape, bodyProperty:{ userData:'player', linearDamping: 0.4, angularDamping: 50} } );
 
 	    this.phys['wheel'] = b2;
-
-
 	    
-
-	    var revoluteJointDef = new  b2RevoluteJointDef();
-	    revoluteJointDef.Initialize(b2, b1, b2.GetWorldCenter());
+	    this.setRevoluteJoint( {world:this.world, b1:b2, b2:b1, anchor:b2.GetWorldCenter()} );				
 	    
-	    /* 
-	    revoluteJointDef.maxMotorTorque = 1.0;
-	    revoluteJointDef.enableMotor = true;
-
-	    revoluteJointDef.maxMotorTorque = 20;
-	    revoluteJointDef.motorSpeed =  -Math.PI; //1 turn per second counter-clockwise
-	 	*/
-	    world.CreateJoint(revoluteJointDef);
 
 	    this.Listener();
 
@@ -70,10 +47,12 @@ function Persona(pxTmtr){
 			if(event.keyCode == "37"){//left
 				//console.log(self.phys['wheel']);
 				var velocity = self.phys['wheel'].GetLinearVelocity();
-				console.log(velocity);
-				//self.phys['wheel'].SetAngularVelocity(-2*Math.PI);
-				if(velocity.x >= -3.5)
-					self.phys['wheel'].ApplyTorque(-Math.PI);
+				//console.log(velocity);
+				//self.phys['wheel'].SetAngularVelocity(-300*Math.PI);
+				self.phys['box'].SetLinearVelocity(new b2Vec2(-3,0));
+
+				/*if(velocity.x >= -3.5)
+					self.phys['wheel'].ApplyTorque(-Math.PI);*/
 			}
 			if(event.keyCode == "38"){//up
 				//catch collide with ground body
@@ -83,10 +62,13 @@ function Persona(pxTmtr){
 			}
 			if(event.keyCode == "39"){//right
 				var velocity = self.phys['wheel'].GetLinearVelocity();
-				console.log(velocity);
-				if(velocity.x <= 3.5)
-					self.phys['wheel'].ApplyTorque(Math.PI);
-				console.log(velocity);
+				//console.log(velocity);
+				/*if(velocity.x <= 3.5)
+					self.phys['wheel'].ApplyTorque(Math.PI);*/
+				//self.phys['wheel'].SetAngularVelocity(300*Math.PI);
+				self.phys['box'].SetLinearVelocity(new b2Vec2(3,0));
+
+				//console.log(velocity);
 				
 			}
 			if(event.keyCode == "40"){//down
@@ -171,14 +153,18 @@ function Persona(pxTmtr){
 	}
 
 	this.updateObj = function (){
+
+		//this.phys['wheel'].SetAngularVelocity(0);
 		
-		
+		/*
 		for (var i = 0; i < this.parts.length; i++) {	
 			
 			var pos = this.phys[i].body.GetPosition();
 			this.parts[i].setPosition( pos.x*this.PixelToMeter, pos.y*this.PixelToMeter );
 	        this.parts[i].setRotation( this.phys[i].body.GetAngle() );					
-		}
+		}*/
 	}
 
 }
+
+Extend( Persona.prototype, BaseObject.prototype );

@@ -6,6 +6,7 @@ function DynamicObject(world,pxTmtr){
 
 	this.world = world;
 	this.phys = [];
+	this.shapes = [];
 	this.parts = [];
 	this.PixelToMeter = pxTmtr || 50;
 	
@@ -39,7 +40,7 @@ function DynamicObject(world,pxTmtr){
 	    var body = this.world.CreateBody(bodydef);
 	    body.CreateFixture(fixtureDef);
 	    
-	    
+	    this.shapes.push(b2shape);
 	    this.phys.push(body);	
 
 	    //this.setGraphic(this.phys.length - 1);
@@ -202,6 +203,7 @@ function StaticObject(world,pxTmtr){
 	
 	this.world = world;
 	this.phys = [];
+	this.shapes = [];
 	this.parts = [];
 	this.PixelToMeter = pxTmtr || 50;
 
@@ -211,6 +213,7 @@ function StaticObject(world,pxTmtr){
 		bodydef.type = b2Body.b2_staticBody;
 		if(pos)
 	    	bodydef.position.Set(pos.x/this.PixelToMeter, pos.y/this.PixelToMeter);
+	    bodydef.userData = 'GROUND';
 
 	    var fixtureDef = new b2FixtureDef();
         fixtureDef.density = 1;
@@ -235,6 +238,7 @@ function StaticObject(world,pxTmtr){
 	    var body = this.world.CreateBody(bodydef);
 	    body.CreateFixture(fixtureDef);
 	    
+	    this.shapes.push(b2shape);
 	    this.phys.push(body);	
 
 	    //this.setGraphic(this.phys.length - 1);
