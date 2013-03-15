@@ -37,7 +37,7 @@ function definePhysicWorld() {
 
     var world = new b2World(
         new b2Vec2(0, 10)    //gravity
-        ,  true                 //allow sleep
+        //,  true                 //allow sleep
     );
 
     var w = window.innerWidth;
