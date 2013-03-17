@@ -7,8 +7,8 @@ window.addEventListener('load',function(e){
 	//window.addEventListener('resize',resizer,false);
 
 
-    var o = definePhysicWorld();
-    defineGraphicWorld( o );
+    /*var o =*/ definePhysicWorld();
+    //defineGraphicWorld( o );
 
 	
 
@@ -19,9 +19,9 @@ window.addEventListener('load',function(e){
 
 function resizer(event){
 
-
+/*
 	stage.setHeight(window.innerHeight);
-	stage.setWidth(window.innerWidth);
+	stage.setWidth(window.innerWidth);*/
 
 
 }
