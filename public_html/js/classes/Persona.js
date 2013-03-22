@@ -4,7 +4,7 @@ function Persona(pxTmtr){
 
 	this.PixelToMeter = pxTmtr || 50;
 	this.phys = {};
-	this.parts = [];
+	this.skins = [];
 	
 	this.Initialize = function(world,pos){
 
@@ -21,6 +21,7 @@ function Persona(pxTmtr){
 
 	    
 	    this.phys['box'] = b1;
+	    //Addpart(b1,skin,"box")
 
 	    var jointExperimentCircleShape = new b2CircleShape();
 	    jointExperimentCircleShape.SetRadius(0.2);
@@ -33,6 +34,11 @@ function Persona(pxTmtr){
 	    this.setRevoluteJoint( {world:this.world, b1:b2, b2:b1, anchor:b2.GetWorldCenter()} );				
 	    
 
+	}
+
+	this.Addpart = function(body,skin,title){
+		this.phys[title] = body;
+		this.skins[title] = skin;
 	}
 
 	

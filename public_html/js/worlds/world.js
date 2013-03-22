@@ -47,6 +47,13 @@ function definePhysicWorld() {
 
     var shape;
 
+
+    //define grahic for playee 
+    //var grahicPlayee = new PIXI.js.SomeObj() ...
+    //bind id for graphic obj 
+    //graphicPlayee.idName = "Playee";
+    //and send this name as userData property into constructor of Persona class for update manipulation 
+    //graphicObj["key"].pos = Box2DObj["key"] 
     var playee = new Persona(PixelToMeter);
     playee.Initialize(world, {x: 100, y: 200});
 
