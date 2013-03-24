@@ -3,27 +3,18 @@ body{
 	margin:0px;
 	overflow:hidden;
 }
-#container>div{
-	border: 1px red solid;
-}
-#container{
-	border: 1px lightblue solid;	
-}
-#meter{
-	position: absolute;
-	top: 1px;
-	left: 603px;
-	width: 10px;
-	height: 600px;
-	border: 1px black solid;
-}
-.meter_one{
-	height: 100px;
-	width: 100%;	
-}
 #DebugCanvas{
 	position: absolute;
 	left: 0px;
 	top: 0%;
 	border: 1px green solid;
+}
+#canvas{
+	border: 1px red solid;
+}
+#viewport{
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	z-index: 100;
 }

@@ -32,6 +32,26 @@ addProperty( BaseObject.prototype, {
 
         return body;
 	},
+	getShapeFromSkin: function( param ){
+
+		var shape;
+
+		switch (param.type.toLowerCase()){
+			case "polygon":
+				shape = new b2PolygonShape();
+				shape.SetAsBox( param.width/2, param.height/2 );
+				break;
+			case "circle":
+				shape = new b2CircleShape();
+				shape.SetRadius( param.width/2 );
+				break;
+			default:
+
+				break;
+		}
+
+		return shape;
+	},
 	attachFixture: function( param ){
 		var fixtureDef = new b2FixtureDef();
         fixtureDef.density = 1;

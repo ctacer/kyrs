@@ -15,7 +15,7 @@ function Model( prop ){
 
 	this.Update = function(){
 		for (var i = 0; i < this.objs.length; i++) {
-	        this.objs[i].updateObj();
+	        this.objs[i].Update();
 	    }
 	}
 

@@ -1,22 +1,58 @@
+function Renderer ( param ){
 
+	this.stage = param.stage;
+	this.world = param.world;
+	this.model = param.model || null;
+	this.PixelToMeter = param.SCALE || 50;
 
+	this.SetModel = function( model ){
+		this.model = model;
+		this.FillStage();
+	}
 
+	this.Initialize = function(  ){
 
-function Renderer ( prop ){
+		this.stage.canvas.width = window.innerWidth - 2;
+		this.stage.canvas.height = window.innerHeight - 2;
+		console.log(this.stage.canvas.width);
 
-	this.objs = [];
-	this.stage = prop.stage || null;
-	this.world = prop.world;
-	this.PixelToMeter = prop.pxTmtr || 50;
-	this.model = prop.model;
+		if(this.model)
+			this.FillStage();
 
+		this.ListenEvent();
+
+	}
+
+	this.FillStage = function(){
+
+		for (var i = 0; i < this.model.objs.length; i++) {
+			for (var j = 0; j < this.model.objs[i].skins.length; j++) {
+				this.stage.addChild(this.model.objs[i].skins[j]);
+			};
+		};
+
+	}
+
+	this.ListenEvent = function(){
+
+		var self = this;
+
+		window.addEventListener('resize',function(event){
+
+	        self.stage.canvas.width = window.innerWidth - 2;
+	        self.stage.canvas.height = window.innerHeight - 2;
+
+	    },false);
+
+	}
+	
+	this.Initialize();
 
 	this.createDebuger = function(){
 
 			var debugDraw = new b2DebugDraw();		
-			console.log(this);
 
-            debugDraw.SetSprite(document.getElementById('DebugCanvas').getContext("2d"));
+            debugDraw.SetSprite(document.getElementById('canvas').getContext("2d"));
             debugDraw.SetDrawScale(50.0);
             debugDraw.SetFillAlpha(0.5);
             debugDraw.SetLineThickness(1.0);
@@ -31,20 +67,12 @@ function Renderer ( prop ){
 
 	this.setStatElement = function(el){
 		
-		var stats = new Stats();
-	    stats.domElement.style.position = 'absolute';
-	    stats.domElement.style.right = '1px';
-	    stats.domElement.style.top = '1px';
-	    stats.domElement.style.zIndex = 100;        
+		var stats = new Stats();      
 	    el.appendChild( stats.domElement );
 	    this.stats = stats;
 
 	}
 
-	this.addObject = function(obj){
-		this.objs.push(obj);
-	}
-	
 
 	this.render = function (){
 
@@ -62,22 +90,11 @@ function Renderer ( prop ){
 	        if(self.stats)
 	        	self.stats.update();
 	                
-	        //self.world.Step(1 / 60, 10, 10);	
-	        self.model.Step();
-
-	        //Model.Update();                     
-	        //self.model.Update();
+	        self.world.Step(1 / 60, 10, 10);	                     
 	  		
-	        /*for (var i = 0; i < self.objs.length; i++) {
-	        	self.objs[i].updateObj();
-	        };*/
-	        //self.stage.draw();
-/*
-	        if(self.debug){
-	        	self.world.DrawDebugData();    
-	        }
-
-*/
+	        self.model.Update();
+	        self.stage.update();
+	        
 	        self.world.ClearForces();
 	    }
 
@@ -87,8 +104,7 @@ function Renderer ( prop ){
 	        if(self.stats)
 	        	self.stats.update();
 	                
-	        self.model.Step();
-	        //self.world.Step(1 / 60, 10, 10);
+	        self.world.Step(1 / 60, 10, 10);
 	        self.world.DrawDebugData();           
 	  		self.world.ClearForces();
 	    }
@@ -97,3 +113,5 @@ function Renderer ( prop ){
     
 
 }
+
+
