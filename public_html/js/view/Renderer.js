@@ -39,6 +39,11 @@ function Renderer ( param ){
 
 		window.addEventListener('resize',function(event){
 
+			self.model.HandleResize( {
+				w: ( (window.innerWidth - 2)/self.stage.canvas.width ),
+				h: ( ( window.innerHeight - 2)/self.stage.canvas.height )
+			} );
+
 	        self.stage.canvas.width = window.innerWidth - 2;
 	        self.stage.canvas.height = window.innerHeight - 2;
 

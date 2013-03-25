@@ -36,6 +36,12 @@ function DynamicObject( param ){
 
 		};
 	}
+
+	this.HandleResize = function( param ){
+		for (var i = 0; i < this.bodys.length; i++) {
+			this.bodys[i].SetPosition( new b2Vec2(this.bodys[i].GetPosition().x*param.w, this.bodys[i].GetPosition().y*param.h));
+		};
+	}
 	
 	
 }

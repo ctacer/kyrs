@@ -15,13 +15,27 @@ function Controller( prop ){
 		window.addEventListener('keydown',function(event){
 
 			if(event.keyCode == "37"){//left
-				self.player.moveLeft();
+				self.player.moveLeft(true);
 			}
 			if(event.keyCode == "38"){//up
-				self.player.moveUp();
+				self.player.moveUp(true);
 			}
 			if(event.keyCode == "39"){//right
-				self.player.moveRight();				
+				self.player.moveRight(true);				
+			}
+
+		},false);
+
+		window.addEventListener('keyup',function(event){
+
+			if(event.keyCode == "37"){//left
+				self.player.moveLeft(false);
+			}
+			if(event.keyCode == "38"){//up
+				self.player.moveUp(false);
+			}
+			if(event.keyCode == "39"){//right
+				self.player.moveRight(false);				
 			}
 
 		},false);

@@ -3,21 +3,10 @@
 //boxcore
 
 window.onload = function(){
-
-	beload();
-
-}
-
-
-
-
-//
-
-function beload() {
 	
 
 	b2Vec2 = Box2D.Common.Math.b2Vec2
-    ,  b2AABB = Box2D.Collision.b2AABB
+    ,   b2AABB = Box2D.Collision.b2AABB
     ,   b2BodyDef = Box2D.Dynamics.b2BodyDef
     ,   b2Body = Box2D.Dynamics.b2Body
     ,   b2FixtureDef = Box2D.Dynamics.b2FixtureDef
@@ -42,45 +31,37 @@ function beload() {
     ,   b2ContactListener = Box2D.Dynamics.b2ContactListener    ;
                 
 
-
-
-    var PixelToMeter = 50;
-
-    var world = new b2World(
-        new b2Vec2(0, 10)    //gravity
-        //,  true                 //allow sleep
-    );
-
-    var w = window.innerWidth/PixelToMeter;
-    var h = window.innerHeight/PixelToMeter;
+    window.Model = new Model({
+        gravity: {x: 0, y: 10},
+        SCALE: 50        
+    });
 	
-    //define world objects
+    var playee = new Persona(Model.GetScale());
+    playee.Initialize(Model.GetWorld(), {x: 100, y: 200});
 
-    var shape;
+    Model.AddModel( playee );
 
 
-    //define grahic for playee 
-    //var grahicPlayee = new PIXI.js.SomeObj() ...
-    //bind id for graphic obj 
-    //graphicPlayee.idName = "Playee";
-    //and send this name as userData property into constructor of Persona class for update manipulation 
-    //graphicObj["key"].pos = Box2DObj["key"] 
-    var playee = new Persona(PixelToMeter);
-    playee.Initialize(world, {x: 100, y: 200});
+    spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
+
+    var ss = new createjs.SpriteSheet(spriteSheet);
+    grant = new createjs.BitmapAnimation(ss);
+
+    // Set up looping
+    ss.getAnimation("stand").next = "stand";
+    ss.getAnimation("run").next = "run";
+    ss.getAnimation("jump").next = "stand";
+    grant.gotoAndPlay("stand");
+
+    grant.scaleX = 0.12;
+    grant.scaleY = 0.24;
+
+    playee.SetSkin( grant );
 
 
     /*var contcListener = new ContactListener();
     contcListener.SetUp(world);
     */
-
-
-    //var os = loadMap(world, PixelToMeter, h, w);
-
-
-    /*window.Model = new Model({
-        objs: os,
-        world:world        
-    });*/
 
     window.Controller = new Controller( {
         player: playee
@@ -89,27 +70,10 @@ function beload() {
     var canvas = document.getElementById("canvas");
     var stage = new createjs.Stage(canvas);
 
-    /*var image = new createjs.Bitmap("resources/world/ground.png");
-    stage.addChild(image);
-*/
     /*
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", handleTick);
-    */
-
-    ViewFactory(stage, world, PixelToMeter);
-
-    //add event listener to my renderer class
-    
-    
-    
-  
-
-}
-
-
-
-function ViewFactory(stage,world,PixelToMeter){
+    */    
     
     var skin;
 
@@ -133,9 +97,9 @@ function ViewFactory(stage,world,PixelToMeter){
         var os = [];
 
         window.Render = new Renderer({
-            world: world,
+            world: Model.GetWorld(),
             stage:stage ,
-            SCALE: PixelToMeter 
+            SCALE: Model.GetScale() 
             //model: Model     
         });
 
@@ -166,16 +130,16 @@ function ViewFactory(stage,world,PixelToMeter){
                     ground.x = w/2;
 
                     var groundPhys = new PGObject({
-                        world:world,
-                        SCALE:PixelToMeter,
+                        world:Model.GetWorld(),
+                        SCALE:Model.GetScale(),
                         type_:"static"
                     });
-                    console.log(w);
+                    
                     groundPhys.Set( {
                         skin: ground,
                         type:"polygon",
-                        width:(w)/PixelToMeter,
-                        height:(79)/PixelToMeter,
+                        width:(w)/Model.GetScale(),
+                        height:(79)/Model.GetScale(),
                         pos:{x: w/2,y: (h-79/2)}
                     } );
                     os.push(groundPhys);
@@ -191,15 +155,16 @@ function ViewFactory(stage,world,PixelToMeter){
                     hill.y = 59/2;
 
                     var box = new PGObject({
-                        world:world,
-                        SCALE:PixelToMeter,
+                        world:Model.GetWorld(),
+                        SCALE:Model.GetScale(),
                         type_:"dynamic"
                     });
+
                     box.Set( {
                         skin: hill,
                         type:"polygon",
-                        width:(282)/PixelToMeter,
-                        height:(59)/PixelToMeter,
+                        width:(282)/Model.GetScale(),
+                        height:(59)/Model.GetScale(),
                         pos:{x: hillX,y: (59/2)}
                     } );
                     os.push(box);
@@ -214,17 +179,9 @@ function ViewFactory(stage,world,PixelToMeter){
             }
         }
 
-        //stage.addChild( ground );
-        //stage.addChild(sky, ground, hill, hill2);
-        //render()
+        Model.AddModel( os );
 
-        window.Model = new Model({
-            objs: os,
-            world:world        
-        });
         console.log(Model);
-
-        console.log('start');
         
         Render.SetModel( Model );
 
