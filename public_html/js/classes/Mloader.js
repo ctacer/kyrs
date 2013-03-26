@@ -34,7 +34,7 @@ function modelLoader( param ){
 	var self = this;	
 
 	function handleFileLoad(event){
-		console.log(event.item);
+		
 		self.models.push(event.item);
 	}
 

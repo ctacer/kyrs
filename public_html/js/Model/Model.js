@@ -8,6 +8,13 @@ function Model( prop ){
 		this.objs = this.objs.concat(obj);
 	}
 
+	this.AddModelToBegin = function( obj ){
+		if( obj.constructor.toString().match( /\bArray\b/) == null){
+			this.objs.splice(0,0,obj);
+			console.log(this.objs);
+		}
+	}
+
 	this.GetWorld = function(){
 		return this.world;
 	}

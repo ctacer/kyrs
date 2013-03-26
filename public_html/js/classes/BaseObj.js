@@ -19,7 +19,7 @@ addProperty( BaseObject.prototype, {
 
 	    var fixtureDef = new b2FixtureDef();
         fixtureDef.density = 1;
-        fixtureDef.friction = 0.5;
+        fixtureDef.friction = 0.2;
         fixtureDef.restitution = 0.2;
         if(param.fixtureProperty){
         	addProperty(fixtureDef, param.fixtureProperty);

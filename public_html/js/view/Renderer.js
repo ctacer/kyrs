@@ -10,11 +10,14 @@ function Renderer ( param ){
 		this.FillStage();
 	}
 
+	this.GetStage = function(){
+		return this.stage;
+	}
+
 	this.Initialize = function(  ){
 
 		this.stage.canvas.width = window.innerWidth - 2;
 		this.stage.canvas.height = window.innerHeight - 2;
-		console.log(this.stage.canvas.width);
 
 		if(this.model)
 			this.FillStage();
@@ -28,6 +31,7 @@ function Renderer ( param ){
 		for (var i = 0; i < this.model.objs.length; i++) {
 			for (var j = 0; j < this.model.objs[i].skins.length; j++) {
 				this.stage.addChild(this.model.objs[i].skins[j]);
+				//console.log( this.model.objs[i].skins[j] );
 			};
 		};
 
@@ -108,7 +112,8 @@ function Renderer ( param ){
 	        
 	        if(self.stats)
 	        	self.stats.update();
-	                
+	        
+	        self.model.Update();        
 	        self.world.Step(1 / 60, 10, 10);
 	        self.world.DrawDebugData();           
 	  		self.world.ClearForces();

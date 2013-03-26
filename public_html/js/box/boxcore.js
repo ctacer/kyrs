@@ -40,6 +40,7 @@ window.onload = function(){
     playee.Initialize(Model.GetWorld(), {x: 100, y: 200});
 
     Model.AddModel( playee );
+    //Model.objs[0].bodys['wheel'].SetAngularVelocity(15);
 
 
     spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
@@ -106,6 +107,36 @@ window.onload = function(){
         var w = stage.canvas.width;
         var h = stage.canvas.height;
 
+
+        //set walls bodys
+        var wall = new PGObject({
+            world:Model.GetWorld(),
+            SCALE:Model.GetScale(),
+            type_:"static"
+        });
+        wall.Set({
+            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
+            type:"polygon",
+            width: 10/Model.GetScale(),
+            height: h/Model.GetScale(),
+            pos: {x: 10/2,y: h/2}
+        });
+        wall.Set({
+            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
+            type:"polygon",
+            width: 10/Model.GetScale(),
+            height: h/Model.GetScale(),
+            pos: {x: w-10/2,y: h/2}
+        });
+        wall.Set({
+            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,w,10)) ),
+            type:"polygon",
+            width: w/Model.GetScale(),
+            height: 10/Model.GetScale(),
+            pos: {x: w/2,y: 10/2}
+        });
+        os.push(wall);
+
         for (var i = 0; i < models.length; i++) {
             var item = models[i];
             var id = item.id;
@@ -144,17 +175,30 @@ window.onload = function(){
                     } );
                     os.push(groundPhys);
                     
+
+                    
                     break;
                 case "hill":
                     hill = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,282,59));
                     hill.scaleX = hill.scaleY = 1;                    
                     hill.regX = 141;
                     hill.regY = 29.5;
-                    var hillX = Math.random() * w + 141;                    
+                    var hillX = 1 * w/2 ;                    
                     hill.x = hillX;
                     hill.y = 59/2;
 
-                    var box = new PGObject({
+                    console.log(Render.GetStage());
+                    var back_hill = new Background({
+                        stage: Render.GetStage(),
+                        title: "hill",
+                        skin:hill,
+                        callback: "x+=5;loopx=(-100)"
+                    });
+                    console.log(back_hill.skins.length);
+                    //os.push( back_hill );
+                    Model.AddModelToBegin( back_hill );
+
+                    /*var box = new PGObject({
                         world:Model.GetWorld(),
                         SCALE:Model.GetScale(),
                         type_:"dynamic"
@@ -168,6 +212,7 @@ window.onload = function(){
                         pos:{x: hillX,y: (59/2)}
                     } );
                     os.push(box);
+                    */
 
                     break;
                 case "hill2":
@@ -179,11 +224,14 @@ window.onload = function(){
             }
         }
 
+
         Model.AddModel( os );
 
         console.log(Model);
         
         Render.SetModel( Model );
+
+        console.log();
 
 
         Render.setStatElement(document.getElementById( 'viewport' ));
