@@ -114,6 +114,7 @@ window.onload = function(){
             SCALE:Model.GetScale(),
             type_:"static"
         });
+        
         wall.Set({
             skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
             type:"polygon",
@@ -236,7 +237,7 @@ window.onload = function(){
 
         Render.setStatElement(document.getElementById( 'viewport' ));
 
-        //Render.createDebuger();
+        Render.createDebuger();
 
         Render.render();
 

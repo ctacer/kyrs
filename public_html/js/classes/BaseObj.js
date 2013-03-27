@@ -5,6 +5,11 @@ function BaseObject(  ){}
 addProperty( BaseObject.prototype, {
 
 	getType: function(){ return 'BaseObject'; },
+	init: function(){
+		//this.skins = [];
+		//this.bodys = [];
+		//this.SCALE = 50;
+	},
 	updateObj : function(){},
 	getBody: function( param ){
 		var bodydef = new b2BodyDef();

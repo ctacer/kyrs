@@ -5,6 +5,7 @@ function Controller( prop ){
 	this.Initialize = function( prop ){
 
 		this.player = prop.player;
+		this.player.PrepareListen();
 		this.ListenPlayer();
 	}
 
@@ -14,6 +15,10 @@ function Controller( prop ){
 
 		window.addEventListener('keydown',function(event){
 
+			if ( event.keyCode >= 37 && event.keyCode <= 39 ){
+				self.player.setMovement(event.keyCode);
+			}
+/*
 			if(event.keyCode == "37"){//left
 				self.player.moveLeft(true);
 			}
@@ -23,11 +28,16 @@ function Controller( prop ){
 			if(event.keyCode == "39"){//right
 				self.player.moveRight(true);				
 			}
-
+*/
 		},false);
 
 		window.addEventListener('keyup',function(event){
 
+			if ( event.keyCode >= 37 && event.keyCode <= 39 ){
+				self.player.resetMovement(event.keyCode);
+			}
+
+/*
 			if(event.keyCode == "37"){//left
 				self.player.moveLeft(false);
 			}
@@ -37,7 +47,7 @@ function Controller( prop ){
 			if(event.keyCode == "39"){//right
 				self.player.moveRight(false);				
 			}
-
+*/
 		},false);
 
 	}
