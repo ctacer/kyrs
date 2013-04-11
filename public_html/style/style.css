@@ -14,7 +14,43 @@ body{
 }
 #viewport{
 	position: absolute;
-	right: 1px;
+	right: 101px;
 	top: 1px;
 	z-index: 100;
+}
+#toolbox{
+	position: absolute;
+	right: 20px;
+	top: 0px;
+	background-color: #444444;
+}
+#toolbox>div{
+	width: 80px;
+	height: 60px;
+	padding: auto;
+	text-align: center;
+}
+.toolelms span{
+	visibility: hidden;
+	opacity: 0;
+	color: white;
+	position: relative;
+	top:15px;
+	left: -5px;
+	border-radius: 6px;
+	/*width: 80px;*/
+	background-color: #444;
+	z-index: 200;
+}
+.toolelms{
+	border:1px solid red;
+	/*cursor: pointer;*/
+}
+.toolelms:hover{
+}
+.toolelms:hover span{
+	cursor: pointer;
+	visibility: visible;
+	opacity: 0.8;
+	content: attr(data-hovertext);
 }

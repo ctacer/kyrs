@@ -3,11 +3,16 @@ function Renderer ( param ){
 	this.stage = param.stage;
 	this.world = param.world;
 	this.model = param.model || null;
+	//this.backgrounds = param.bg || null;
 	this.PixelToMeter = param.SCALE || 50;
 
 	this.SetModel = function( model ){
 		this.model = model;
 		this.FillStage();
+	}
+
+	this.SetBG = function( bg ){
+		//this.backgrounds = bg;
 	}
 
 	this.GetStage = function(){
@@ -16,8 +21,8 @@ function Renderer ( param ){
 
 	this.Initialize = function(  ){
 
-		this.stage.canvas.width = window.innerWidth - 2;
-		this.stage.canvas.height = window.innerHeight - 2;
+		this.stage.canvas.width = window.innerWidth - 102;
+		this.stage.canvas.height = window.innerHeight - 102;
 
 		if(this.model)
 			this.FillStage();
@@ -44,12 +49,12 @@ function Renderer ( param ){
 		window.addEventListener('resize',function(event){
 
 			self.model.HandleResize( {
-				w: ( (window.innerWidth - 2)/self.stage.canvas.width ),
-				h: ( ( window.innerHeight - 2)/self.stage.canvas.height )
+				w: ( (window.innerWidth - 102)/self.stage.canvas.width ),
+				h: ( ( window.innerHeight - 102)/self.stage.canvas.height )
 			} );
 
-	        self.stage.canvas.width = window.innerWidth - 2;
-	        self.stage.canvas.height = window.innerHeight - 2;
+	        self.stage.canvas.width = window.innerWidth - 102;
+	        self.stage.canvas.height = window.innerHeight - 102;
 
 	    },false);
 
@@ -86,6 +91,16 @@ function Renderer ( param ){
 	this.render = function (){
 
 		var self = this;
+		/*var bool = false,im;
+
+		if(!bool){
+	        im = new Image();
+	        im.onload = function(){
+	        	self.stage.canvas.getContext('2d').drawImage(im,100,100);
+	        }
+	        im.src="resources/toolbox/lamp.png";
+	        bool = !bool;
+	    }*/
 
 		if(!this.debug)
 			func();
@@ -102,7 +117,9 @@ function Renderer ( param ){
 	        self.world.Step(1 / 60, 10, 10);	                     
 	  		
 	        self.model.Update();
+	        //self.backgrounds.Update();
 	        self.stage.update();
+	        //self.stage.canvas.getContext('2d').drawImage(im,100,100);
 	        
 	        self.world.ClearForces();
 	    }
@@ -113,7 +130,8 @@ function Renderer ( param ){
 	        if(self.stats)
 	        	self.stats.update();
 	        
-	        self.model.Update();        
+	        self.model.Update();
+	        //self.backgrounds.Update();
 	        self.world.Step(1 / 60, 10, 10);
 	        self.world.DrawDebugData();           
 	  		self.world.ClearForces();

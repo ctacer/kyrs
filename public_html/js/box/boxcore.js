@@ -31,6 +31,10 @@ window.onload = function(){
     ,   b2ContactListener = Box2D.Dynamics.b2ContactListener    ;
                 
 
+    setToolbox();
+
+
+
     window.Model = new Model({
         gravity: {x: 0, y: 10},
         SCALE: 50        
@@ -187,7 +191,7 @@ window.onload = function(){
                     var hillX = 1 * w/2 ;                    
                     hill.x = hillX;
                     hill.y = 59/2;
-
+/*
                     console.log(Render.GetStage());
                     var back_hill = new Background({
                         stage: Render.GetStage(),
@@ -197,7 +201,7 @@ window.onload = function(){
                     });
                     console.log(back_hill.skins.length);
                     //os.push( back_hill );
-                    Model.AddModelToBegin( back_hill );
+                    Model.AddModelToBegin( back_hill );*/
 
                     /*var box = new PGObject({
                         world:Model.GetWorld(),
@@ -220,24 +224,67 @@ window.onload = function(){
                     hill2 = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,212,50));
                     hill2.x = Math.random() * w;
                     hill2.scaleX = hill2.scaleY = 3;
-                    hill2.y = h - 79 - 125;
+                    hill2.y = h - 79 - 125;/*
+                    var bmp  = new createjs.Bitmap(result);
+                    var bmp2  = new createjs.Bitmap(result);
+                    bmp.x = 0;bmp.y = 0;
+                    bmp.sourceRect = new createjs.Rectangle(112, 0, 100, 50);
+                    bmp2.x = 100;bmp.y = 0;
+                    bmp2.sourceRect = new createjs.Rectangle(0, 0, 112, 50);
+                    console.log( bmp2.image.width * bmp2.scaleX );
+                    bmp2.scaleX = bmp2.scaleY = 0.5;
+                    console.log( bmp2.image.width * bmp2.scaleX );
+                    //Render.stage.addChild(bmp);
+                    var container = new createjs.Container();
+                    var container2 = new createjs.Container();
+                    container.addChild(bmp,bmp2);
+                    container.x = 200;container.y = 50;
+                    container2.x = 250;container2.y = 50;
+                    var bmp3 = bmp.clone();
+                    bmp3.x = 0;
+                    Render.stage.addChild(container2);
+                    container2.addChild(bmp3);
+                    Render.stage.addChild(container);
+                    console.log( container2 );
+                    console.log( container2.getChildAt(1) );
+                    console.log( Render.stage.canvas.width );*/
+
                     break;
             }
         }
-
+/*
+        var backG = new PGObject({
+            world:Model.GetWorld(),
+            SCALE:Model.GetScale(),
+            type_:"static"
+        });
+        
+        backG.Set( {
+            skin: ground,
+            type:"polygon",
+            width:(w)/Model.GetScale(),
+            height:(79)/Model.GetScale(),
+            pos:{x: w/2,y: (h-79/2)}
+        } );
+        os.push(backG);*/
 
         Model.AddModel( os );
 
-        console.log(Model);
-        
+        var BG = new contextBack({
+            stage:Render.GetStage()
+        });
+        BG.AddSkin( "/resources/img/iP4_BGtile.jpg" );
+        Model.AddModelToBegin( BG );
+        //Render.SetBG( BG );
+
         Render.SetModel( Model );
 
-        console.log();
+        console.log(Render);
 
 
         Render.setStatElement(document.getElementById( 'viewport' ));
 
-        Render.createDebuger();
+        //Render.createDebuger();
 
         Render.render();
 

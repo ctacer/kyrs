@@ -25,6 +25,12 @@ function Background( param ){
 		};
 	}
 
+	this._loopAction = function(){
+
+
+		
+	}
+
 	this.HandleResize = function( param ){
 
 
