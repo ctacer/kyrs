@@ -1,0 +1,52 @@
+{"frames": {
+
+"ground.png":
+{
+	"frame": {"x":2,"y":404,"w":81,"h":79},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":81,"h":79},
+	"sourceSize": {"w":81,"h":79}
+},
+"loader.gif":
+{
+	"frame": {"x":9,"y":2,"w":48,"h":48},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":48},
+	"sourceSize": {"w":48,"h":48}
+},
+"parallaxHill1.png":
+{
+	"frame": {"x":85,"y":2,"w":282,"h":59},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":282,"h":59},
+	"sourceSize": {"w":282,"h":59}
+},
+"parallaxHill2.png":
+{
+	"frame": {"x":85,"y":63,"w":212,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":212,"h":50},
+	"sourceSize": {"w":212,"h":50}
+},
+"sky.png":
+{
+	"frame": {"x":2,"y":2,"w":5,"h":400},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":5,"h":400},
+	"sourceSize": {"w":5,"h":400}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "world_old_hash.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":512},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:5287d871612a501ad65bdeb0286ca1dd$"
+}
+}

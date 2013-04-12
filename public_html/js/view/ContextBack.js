@@ -28,12 +28,20 @@ function contextBack( param ){
 	this.Initialize( param );
 
 	this.AddSkin = function( url ){
-		this.skinsURL.push( url );
+
 		var cont = new createjs.Container();
 		cont.x = 0;cont.y = 0;
 		//this.stage.addChild( cont );
 		this.skins.push( cont );
-		this._protoBMPS.push( new createjs.Bitmap( url ) );
+
+		if( url.image ){
+			this.skinsURL.push( "url" );			
+			this._protoBMPS.push( url );
+		}
+		else{
+			this.skinsURL.push( url );		
+			this._protoBMPS.push( new createjs.Bitmap( url ) );
+		}
 		this.Set();
 	}
 

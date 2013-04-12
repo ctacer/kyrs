@@ -87,7 +87,9 @@ window.onload = function(){
         {src:"resources/world/sky.png", id:"sky"},
         {src:"resources/world/ground.png", id:"ground"},
         {src:"resources/world/parallaxHill1.png", id:"hill"},
-        {src:"resources/world/parallaxHill2.png", id:"hill2"}
+        {src:"resources/world/parallaxHill2.png", id:"hill2"},
+        {src:"resources/img/WorldAssets-hd_easeljs.json", id:"JSON"}
+        //{src:"resources/world/parallaxHill2.png", id:"BG"}
     ];
 
     var loader = new modelLoader({
@@ -142,6 +144,11 @@ window.onload = function(){
         });
         os.push(wall);
 
+        var BG = new contextBack({
+            stage:Render.GetStage()
+        });
+        //BG.AddSkin( "/resources/img/iP4_BGtile.jpg" );
+
         for (var i = 0; i < models.length; i++) {
             var item = models[i];
             var id = item.id;
@@ -152,6 +159,22 @@ window.onload = function(){
             }
 
             switch (id) {
+                case "JSON":
+                    var jsonObj = result;
+                    console.log(jsonObj);
+                    var spriteBG = new createjs.SpriteSheet( jsonObj );
+                    console.log(spriteBG);
+                    /*var bmpa = new createjs.BitmapAnimation(spriteBG);
+                    bmpa.gotoAndStop("00_forest_floor");*/
+                    var imgG = createjs.SpriteSheetUtils.extractFrame(spriteBG, "02_front_canopy");
+                    var b_mp = new createjs.Bitmap(imgG);
+                    console.log(b_mp);
+                    //Render.stage.addChild(b_mp);
+                    //Render.stage.addChild(bmpa);
+                    BG.AddSkin( b_mp );
+
+                    //bla
+                    break;
                 case "sky":
                     sky = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,w,h));
                     break;
@@ -270,10 +293,7 @@ window.onload = function(){
 
         Model.AddModel( os );
 
-        var BG = new contextBack({
-            stage:Render.GetStage()
-        });
-        BG.AddSkin( "/resources/img/iP4_BGtile.jpg" );
+        //BG.AddSkin();
         Model.AddModelToBegin( BG );
         //Render.SetBG( BG );
 
