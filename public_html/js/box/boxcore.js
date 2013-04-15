@@ -164,21 +164,21 @@ window.onload = function(){
                     console.log(jsonObj);
                     var spriteBG = new createjs.SpriteSheet( jsonObj );
                     console.log(spriteBG);
-                    /*var bmpa = new createjs.BitmapAnimation(spriteBG);
-                    bmpa.gotoAndStop("00_forest_floor");*/
-                    var imgG = createjs.SpriteSheetUtils.extractFrame(spriteBG, "02_front_canopy");
+                    var bmpa = new createjs.BitmapAnimation(spriteBG);
+                    bmpa.gotoAndStop("00_forest_floor");
+                    var imgG = createjs.SpriteSheetUtils.extractFrame(spriteBG, "00_forest_floor");
                     var b_mp = new createjs.Bitmap(imgG);
                     console.log(b_mp);
                     //Render.stage.addChild(b_mp);
                     //Render.stage.addChild(bmpa);
-                    BG.AddSkin( b_mp );
+                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,y:(Render.GetHeight() - 100 )} );
 
                     //bla
                     break;
                 case "sky":
                     sky = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,w,h));
                     break;
-                case "ground":
+                case "ground":/*
                     ground = new createjs.Shape();
                     var g = ground.graphics;
                     g.beginBitmapFill(result);
@@ -201,7 +201,7 @@ window.onload = function(){
                         height:(79)/Model.GetScale(),
                         pos:{x: w/2,y: (h-79/2)}
                     } );
-                    os.push(groundPhys);
+                    os.push(groundPhys);*/
                     
 
                     
@@ -247,30 +247,20 @@ window.onload = function(){
                     hill2 = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,212,50));
                     hill2.x = Math.random() * w;
                     hill2.scaleX = hill2.scaleY = 3;
-                    hill2.y = h - 79 - 125;/*
+                    hill2.y = h - 79 - 125;
+
+/*
                     var bmp  = new createjs.Bitmap(result);
-                    var bmp2  = new createjs.Bitmap(result);
                     bmp.x = 0;bmp.y = 0;
                     bmp.sourceRect = new createjs.Rectangle(112, 0, 100, 50);
-                    bmp2.x = 100;bmp.y = 0;
-                    bmp2.sourceRect = new createjs.Rectangle(0, 0, 112, 50);
-                    console.log( bmp2.image.width * bmp2.scaleX );
-                    bmp2.scaleX = bmp2.scaleY = 0.5;
-                    console.log( bmp2.image.width * bmp2.scaleX );
-                    //Render.stage.addChild(bmp);
+                    var bmp2  = bmp.clone();                    
+                    bmp2.x = 212;bmp.y = 0;
+                    //bmp2.sourceRect = new createjs.Rectangle(0, 0, 112, 50);
+                    //bmp2.scaleX = bmp2.scaleY = 0.5;
                     var container = new createjs.Container();
-                    var container2 = new createjs.Container();
                     container.addChild(bmp,bmp2);
-                    container.x = 200;container.y = 50;
-                    container2.x = 250;container2.y = 50;
-                    var bmp3 = bmp.clone();
-                    bmp3.x = 0;
-                    Render.stage.addChild(container2);
-                    container2.addChild(bmp3);
-                    Render.stage.addChild(container);
-                    console.log( container2 );
-                    console.log( container2.getChildAt(1) );
-                    console.log( Render.stage.canvas.width );*/
+                    container.x = 200;container.y = 50;                    
+                    Render.stage.addChild(container);*/
 
                     break;
             }

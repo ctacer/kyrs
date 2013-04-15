@@ -27,7 +27,7 @@ function contextBack( param ){
 
 	this.Initialize( param );
 
-	this.AddSkin = function( url ){
+	this.AddSkin = function( url, param ){
 
 		var cont = new createjs.Container();
 		cont.x = 0;cont.y = 0;
@@ -42,17 +42,31 @@ function contextBack( param ){
 			this.skinsURL.push( url );		
 			this._protoBMPS.push( new createjs.Bitmap( url ) );
 		}
-		this.Set();
+		this.Set(false, param);
 	}
 
-	this.Set = function( id ){
+	this.Set = function( id, param ){
+		var GAP = 0;
+
 		var ids = id || this._protoBMPS.length - 1;
 		var curBMP = this._protoBMPS[ids];
-		curBMP.snapToPixel = true;
-		var curContainer = this.skins[ids];
+		//curBMP.snapToPixel = true;
+		var curContainer = this.skins[ids];		
 		var height = this.stage.canvas.height;
-		var scale = height / curBMP.image.height ;
-		var width = curBMP.image.width * scale ;
+		var scale = height / (curBMP.image.height *  curBMP.scaleY);
+		if(param){
+			if(param.scale)
+				scale = param.scale;
+			if(param.gap != null){
+				GAP = param.gap ;
+				curBMP.sourceRect = new createjs.Rectangle(GAP, 0, curBMP.image.width - GAP , curBMP.image.height);
+			}
+			if(param.x)
+				curContainer.x = param.x;
+			if(param.y)
+				curContainer.y = param.y;
+		}
+		var width = curBMP.image.width * curBMP.scaleX * scale - GAP;
 		var count = this._adjustWidth( width );
 
 		//for (var i = 0; i < this.skins.length; i++) {	
@@ -80,7 +94,8 @@ function contextBack( param ){
 				_bmp = curContainer.getChildAt(i);
 
 			_bmp.scaleX = _bmp.scaleY = scale ;
-			_bmp.x = i * _bmp.image.width * scale ;
+			_bmp.GAP = GAP;
+			_bmp.x = i *( _bmp.image.width * _bmp.scaleX - GAP) ;
 			//_bmp.cache(0,0,_bmp.image.width * scale,_bmp.image.height*scale);
 		}
 		for (var i = count; i < curContainer.getNumChildren(); i++) {
@@ -106,7 +121,7 @@ function contextBack( param ){
 				//remove from start add to the end
 				//child = container.getChildAt(0).clone();
 				//child.x = container.getChildAt(container.getNumChildren() - 1).x + child.image.width * child.scaleX  ;
-				child.x += (container.getNumChildren() ) * child.image.width * child.scaleX  ;
+				child.x += (container.getNumChildren() ) * (child.image.width * child.scaleX - child.GAP) ;
 				//container.removeChildAt(0);
 				//container.addChild( child );
 				//container.getChildAt(0).x -= 3;

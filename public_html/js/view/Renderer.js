@@ -19,6 +19,13 @@ function Renderer ( param ){
 		return this.stage;
 	}
 
+	this.GetWidth = function(){
+		return this.stage.canvas.width;
+	}
+	this.GetHeight = function(){
+		return this.stage.canvas.height;
+	}
+
 	this.Initialize = function(  ){
 
 		this.stage.canvas.width = window.innerWidth - 102;
