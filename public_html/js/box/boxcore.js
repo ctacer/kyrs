@@ -185,7 +185,7 @@ window.onload = function(){
                     var b_mp = new createjs.Bitmap(result);
                     console.log(b_mp);                    
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,y:0}, {id:0} );
+                    BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed: 5,y:0}, {id:0} );
                     break;
                 default:
                     break;
