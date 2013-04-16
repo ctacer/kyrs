@@ -47,20 +47,50 @@ window.onload = function(){
     //Model.objs[0].bodys['wheel'].SetAngularVelocity(15);
 
 
-    spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
+    //spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
+    spriteSheet = {
+        "images": ["resources/persona/Pixie/pixie_easel.png"],"frames": [
+
+            [104, 193, 97, 100], 
+            [2, 2, 105, 102], 
+            [2, 200, 96, 104], 
+            [203, 194, 94, 93], 
+            [407, 99, 94, 97], 
+            [2, 106, 100, 92], 
+            [318, 2, 99, 95], 
+            [311, 99, 94, 97], 
+            [2, 406, 93, 92], 
+            [2, 306, 93, 98], 
+            [215, 2, 101, 94], 
+            [211, 98, 98, 94], 
+            [109, 2, 104, 93], 
+            [109, 97, 100, 94], 
+            [109, 2, 104, 93]
+        ],
+        "animations": {
+            
+                "fall":[0, 2], 
+                "run":[3, 11],
+                "flat":[12, 14]
+        },
+        "texturepacker": [
+                "SmartUpdateHash: $TexturePacker:SmartUpdate:3d9903c9e34ccb07b382206529c283ec$",
+                "Created with TexturePacker (http://www.texturepacker.com) for EasalJS"
+        ]
+    }
 
     var ss = new createjs.SpriteSheet(spriteSheet);
     //ss.addEventListener("complete", function(event){});
     grant = new createjs.BitmapAnimation(ss);
 
     // Set up looping
-    ss.getAnimation("stand").next = "stand";
+    ss.getAnimation("fall").next = "fall";
     ss.getAnimation("run").next = "run";
-    ss.getAnimation("jump").next = "stand";
-    grant.gotoAndPlay("stand");
-
+    ss.getAnimation("flat").next = "flat";
+    grant.gotoAndPlay("run");
+/*
     grant.scaleX = 0.12;
-    grant.scaleY = 0.24;
+    grant.scaleY = 0.24;*/
 
     playee.SetSkin( grant );
 
