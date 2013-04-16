@@ -50,6 +50,7 @@ window.onload = function(){
     spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
 
     var ss = new createjs.SpriteSheet(spriteSheet);
+    //ss.addEventListener("complete", function(event){});
     grant = new createjs.BitmapAnimation(ss);
 
     // Set up looping
@@ -82,13 +83,12 @@ window.onload = function(){
     
     var skin;
 
-    var manifest = [
-        //{src:"resources/world/runningGrant.png", id:"grant"},
-        {src:"resources/world/sky.png", id:"sky"},
-        {src:"resources/world/ground.png", id:"ground"},
-        {src:"resources/world/parallaxHill1.png", id:"hill"},
-        {src:"resources/world/parallaxHill2.png", id:"hill2"},
-        {src:"resources/img/WorldAssets-hd_easeljs.json", id:"JSON"}
+    var manifest = [       
+        {src:"resources/world/backgrass1.png", id:"backgrass1"},
+        {src:"resources/world/ceilingrass.png", id:"ceilingrass"},
+        {src:"resources/world/groundgrass.png", id:"groundgrass"},
+        {src:"resources/world/backfon.png", id:"backfon"},
+        //{src:"resources/img/WorldAssets-hd_easeljs.json", id:"JSON"}
         //{src:"resources/world/parallaxHill2.png", id:"BG"}
     ];
 
@@ -159,133 +159,45 @@ window.onload = function(){
             }
 
             switch (id) {
-                case "JSON":
-                    var jsonObj = result;
-                    console.log(jsonObj);
-                    var spriteBG = new createjs.SpriteSheet( jsonObj );
-                    console.log(spriteBG);
-                    var bmpa = new createjs.BitmapAnimation(spriteBG);
-                    bmpa.gotoAndStop("00_forest_floor");
-                    var imgG = createjs.SpriteSheetUtils.extractFrame(spriteBG, "00_forest_floor");
-                    var b_mp = new createjs.Bitmap(imgG);
-                    console.log(b_mp);
-                    //Render.stage.addChild(b_mp);
-                    //Render.stage.addChild(bmpa);
+                case "backgrass1":
+
+                    var b_mp = new createjs.Bitmap(result);
+                    console.log(b_mp);                    
+                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/(Render.GetHeight() - 150)} );
+                    break;
+                case "ceilingrass":
+
+                    var b_mp = new createjs.Bitmap(result);
+                    console.log(b_mp);                    
+                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+                    break;
+                case "groundgrass":
+
+                    var b_mp = new createjs.Bitmap(result);
+                    console.log(b_mp);                    
+                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
                     BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,y:(Render.GetHeight() - 100 )} );
-
-                    //bla
                     break;
-                case "sky":
-                    sky = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,w,h));
+                case "backfon":
+
+                    var b_mp = new createjs.Bitmap(result);
+                    console.log(b_mp);                    
+                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+                    BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,y:0}, {id:0} );
                     break;
-                case "ground":/*
-                    ground = new createjs.Shape();
-                    var g = ground.graphics;
-                    g.beginBitmapFill(result);
-                    g.drawRect(0, 0, w+330, 79);
-                    ground.regX = w/2;
-                    ground.regY = 79/2;
-                    ground.y = h-79/2;
-                    ground.x = w/2;
-
-                    var groundPhys = new PGObject({
-                        world:Model.GetWorld(),
-                        SCALE:Model.GetScale(),
-                        type_:"static"
-                    });
-                    
-                    groundPhys.Set( {
-                        skin: ground,
-                        type:"polygon",
-                        width:(w)/Model.GetScale(),
-                        height:(79)/Model.GetScale(),
-                        pos:{x: w/2,y: (h-79/2)}
-                    } );
-                    os.push(groundPhys);*/
-                    
-
-                    
-                    break;
-                case "hill":
-                    hill = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,282,59));
-                    hill.scaleX = hill.scaleY = 1;                    
-                    hill.regX = 141;
-                    hill.regY = 29.5;
-                    var hillX = 1 * w/2 ;                    
-                    hill.x = hillX;
-                    hill.y = 59/2;
-/*
-                    console.log(Render.GetStage());
-                    var back_hill = new Background({
-                        stage: Render.GetStage(),
-                        title: "hill",
-                        skin:hill,
-                        callback: "x+=5;loopx=(-100)"
-                    });
-                    console.log(back_hill.skins.length);
-                    //os.push( back_hill );
-                    Model.AddModelToBegin( back_hill );*/
-
-                    /*var box = new PGObject({
-                        world:Model.GetWorld(),
-                        SCALE:Model.GetScale(),
-                        type_:"dynamic"
-                    });
-
-                    box.Set( {
-                        skin: hill,
-                        type:"polygon",
-                        width:(282)/Model.GetScale(),
-                        height:(59)/Model.GetScale(),
-                        pos:{x: hillX,y: (59/2)}
-                    } );
-                    os.push(box);
-                    */
-
-                    break;
-                case "hill2":
-                    hill2 = new createjs.Shape(new createjs.Graphics().beginBitmapFill(result).drawRect(0,0,212,50));
-                    hill2.x = Math.random() * w;
-                    hill2.scaleX = hill2.scaleY = 3;
-                    hill2.y = h - 79 - 125;
-
-/*
-                    var bmp  = new createjs.Bitmap(result);
-                    bmp.x = 0;bmp.y = 0;
-                    bmp.sourceRect = new createjs.Rectangle(112, 0, 100, 50);
-                    var bmp2  = bmp.clone();                    
-                    bmp2.x = 212;bmp.y = 0;
-                    //bmp2.sourceRect = new createjs.Rectangle(0, 0, 112, 50);
-                    //bmp2.scaleX = bmp2.scaleY = 0.5;
-                    var container = new createjs.Container();
-                    container.addChild(bmp,bmp2);
-                    container.x = 200;container.y = 50;                    
-                    Render.stage.addChild(container);*/
-
+                default:
                     break;
             }
         }
-/*
-        var backG = new PGObject({
-            world:Model.GetWorld(),
-            SCALE:Model.GetScale(),
-            type_:"static"
-        });
-        
-        backG.Set( {
-            skin: ground,
-            type:"polygon",
-            width:(w)/Model.GetScale(),
-            height:(79)/Model.GetScale(),
-            pos:{x: w/2,y: (h-79/2)}
-        } );
-        os.push(backG);*/
+
 
         Model.AddModel( os );
 
-        //BG.AddSkin();
+        BG.Finalize();
+
         Model.AddModelToBegin( BG );
-        //Render.SetBG( BG );
 
         Render.SetModel( Model );
 
@@ -293,8 +205,6 @@ window.onload = function(){
 
 
         Render.setStatElement(document.getElementById( 'viewport' ));
-
-        //Render.createDebuger();
 
         Render.render();
 

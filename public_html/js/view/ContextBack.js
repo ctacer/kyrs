@@ -27,11 +27,13 @@ function contextBack( param ){
 
 	this.Initialize( param );
 
-	this.AddSkin = function( url, param ){
+	this.AddSkin = function( url, param ,posi ){
 
 		var cont = new createjs.Container();
 		cont.x = 0;cont.y = 0;
 		//this.stage.addChild( cont );
+		if(posi)
+			cont.posId = posi.id;
 		this.skins.push( cont );
 
 		if( url.image ){
@@ -42,31 +44,61 @@ function contextBack( param ){
 			this.skinsURL.push( url );		
 			this._protoBMPS.push( new createjs.Bitmap( url ) );
 		}
-		this.Set(false, param);
+
+		this.Set(cont, param);
 	}
 
-	this.Set = function( id, param ){
-		var GAP = 0;
+	this._resizeParam = function( param ,_Resize){
 
-		var ids = id || this._protoBMPS.length - 1;
-		var curBMP = this._protoBMPS[ids];
-		//curBMP.snapToPixel = true;
-		var curContainer = this.skins[ids];		
-		var height = this.stage.canvas.height;
-		var scale = height / (curBMP.image.height *  curBMP.scaleY);
+
+		if(param.scale)
+			param.scale *= _Resize.h;
+		else param.scale = 1;
+		
+		if(param.x)
+			param.x *= _Resize.h;
+		if(param.y)
+			param.y *= _Resize.h;
+		
+	}
+
+
+	this.Set = function( cont, parama ){
+		var GAP = 0;
+		
+		//var ids = id || this._protoBMPS.length - 1;
+		var curBMP = this._protoBMPS[this.skins.indexOf(cont)];
+		curBMP.snapToPixel = true;
+		var curContainer = cont;
+		var param = curContainer.param || parama;
+
+		
+		var scale = 1, _ResizeScale = 1;
+		if( param && param._Resize){
+			this._resizeParam( param, param._Resize);
+		}
 		if(param){
 			if(param.scale)
 				scale = param.scale;
-			if(param.gap != null){
+			else param.scale = 1;
+
+			if(param.gap != undefined){
 				GAP = param.gap ;
-				curBMP.sourceRect = new createjs.Rectangle(GAP, 0, curBMP.image.width - GAP , curBMP.image.height);
+				curBMP.sourceRect = new createjs.Rectangle(GAP, 0, curBMP.image.width - 2*GAP , curBMP.image.height);
 			}
+
 			if(param.x)
-				curContainer.x = param.x;
+				curContainer.x = param.x ;
 			if(param.y)
-				curContainer.y = param.y;
+				curContainer.y = param.y ;
+			if(param.speed){
+				//
+			}
+
+			curContainer.param = param;
 		}
-		var width = curBMP.image.width * curBMP.scaleX * scale - GAP;
+		console.log(scale);
+		var width = (curBMP.image.width - 2*GAP )* scale  ;
 		var count = this._adjustWidth( width );
 
 		//for (var i = 0; i < this.skins.length; i++) {	
@@ -88,14 +120,14 @@ function contextBack( param ){
 			if( !curContainer.getChildAt(i) ){
 				_bmp = curBMP.clone();//new createjs.Bitmap( this.skinsURL[this.skinsURL.length - 1] );
 				curContainer.addChild( _bmp );
-				console.log( count );
 			}
 			else
 				_bmp = curContainer.getChildAt(i);
 
+			console.log(scale);
 			_bmp.scaleX = _bmp.scaleY = scale ;
 			_bmp.GAP = GAP;
-			_bmp.x = i *( _bmp.image.width * _bmp.scaleX - GAP) ;
+			_bmp.x = i *( _bmp.image.width - 2*GAP )* _bmp.scaleX ;//(curBMP.image.width - 2*GAP )* scale * _ResizeScale 
 			//_bmp.cache(0,0,_bmp.image.width * scale,_bmp.image.height*scale);
 		}
 		for (var i = count; i < curContainer.getNumChildren(); i++) {
@@ -104,24 +136,38 @@ function contextBack( param ){
 		console.log(curContainer);
 	}
 
-	this._fillContainer = function( count ){
-		/*var curBMP = this._protoBMPS[this._protoBMPS.length - 1];		
-		for (var i = 0; i < count; i++) {
-			var _bmp = curBMP.clone();//new createjs.Bitmap( this.skinsURL[this.skinsURL.length - 1] );
-			_bmp.scaleX = _bmp.scaleY = 
-		};*/
+	
+	this.Sort = function(){
+		var ides = [];
+		var _bmpes = [];
+		for (var i = 0; i < this.skins.length; i++) {
+			if(this.skins[i].posId != undefined ){
+				ides.push( this.skins[i]);
+				this.skins.splice(i,1);
+				_bmpes.push( this._protoBMPS[i]);
+				this._protoBMPS.splice(i,1);
+			}
+		}
+		ides.sort(function(a,b){
+			return a.posId-b.posId});
+		this.skins = ides.concat(this.skins);
+		this._protoBMPS = _bmpes.concat(this._protoBMPS);
+	}
+
+	this.Finalize = function(){
+		this.Sort();
 	}
 
 	this.action = function ( container ){
 
 		for (var i = 0; i < container.getNumChildren(); i++) {
 			var child = container.getChildAt(i);
-			child.x -= 3;			
-			if( child.x <= -child.image.width * child.scaleX ){
+			child.x -= container.param.speed || 3;			
+			if( child.x <= -(child.image.width - 2*child.GAP)* child.scaleX ){
 				//remove from start add to the end
 				//child = container.getChildAt(0).clone();
 				//child.x = container.getChildAt(container.getNumChildren() - 1).x + child.image.width * child.scaleX  ;
-				child.x += (container.getNumChildren() ) * (child.image.width * child.scaleX - child.GAP) ;
+				child.x += (container.getNumChildren() ) * (child.image.width - 2*child.GAP)* child.scaleX ;
 				//container.removeChildAt(0);
 				//container.addChild( child );
 				//container.getChildAt(0).x -= 3;
@@ -146,10 +192,11 @@ function contextBack( param ){
 		};
 
 	}
-	this.HandleResize = function( param ){
-
+	this.HandleResize = function( parama ){
+		console.log(parama);
 		for(var i = 0; i < this.skins.length; i++) {
-			this.Set(i);
+			this.skins[i].param._Resize = parama;
+			this.Set(this.skins[i]);
 		};
 
 	}

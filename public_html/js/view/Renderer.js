@@ -28,8 +28,8 @@ function Renderer ( param ){
 
 	this.Initialize = function(  ){
 
-		this.stage.canvas.width = window.innerWidth - 102;
-		this.stage.canvas.height = window.innerHeight - 102;
+		this.stage.canvas.width = window.innerWidth ;
+		this.stage.canvas.height = window.innerHeight ;
 
 		if(this.model)
 			this.FillStage();
@@ -55,13 +55,16 @@ function Renderer ( param ){
 
 		window.addEventListener('resize',function(event){
 
+			var wi = ( (window.innerWidth )/self.stage.canvas.width );
+			var	hi = ( ( window.innerHeight )/self.stage.canvas.height );
+
 			self.model.HandleResize( {
-				w: ( (window.innerWidth - 102)/self.stage.canvas.width ),
-				h: ( ( window.innerHeight - 102)/self.stage.canvas.height )
+				w: wi,
+				h: hi
 			} );
 
-	        self.stage.canvas.width = window.innerWidth - 102;
-	        self.stage.canvas.height = window.innerHeight - 102;
+	        self.stage.canvas.width = window.innerWidth ;
+	        self.stage.canvas.height = window.innerHeight ;
 
 	    },false);
 
