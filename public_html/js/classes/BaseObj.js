@@ -10,6 +10,9 @@ addProperty( BaseObject.prototype, {
 		//this.bodys = [];
 		//this.SCALE = 50;
 	},
+	/*Translate : function( pos ){
+
+	},*/
 	updateObj : function(){},
 	getBody: function( param ){
 		var bodydef = new b2BodyDef();

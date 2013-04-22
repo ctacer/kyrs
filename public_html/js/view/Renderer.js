@@ -5,6 +5,10 @@ function Renderer ( param ){
 		this.FillStage();
 	}
 
+	this.SetController = function( controller ){
+		this.controller = controller;
+	}
+
 	this.SetBG = function( bg ){
 		//this.backgrounds = bg;
 	}
@@ -22,6 +26,10 @@ function Renderer ( param ){
 	}
 	this.GetHeight = function(){
 		return this.stage.canvas.height;
+	}
+
+	this.Translate = function( pos ){
+		this.model.Translate( pos );
 	}
 
 	this.Initialize = function( param ){
@@ -149,6 +157,7 @@ function Renderer ( param ){
 	        self.world.Step(1 / 60, 10, 10);	                     
 	  		
 	        self.model.Update();
+	        self.controller.Update();
 	        //self.backgrounds.Update();
 	        self.stage.update();
 	        //self.stage.canvas.getContext('2d').drawImage(im,100,100);

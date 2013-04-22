@@ -36,6 +36,9 @@ function modelLoader( param ){
 	function handleFileLoad(event){
 		
 		self.models.push(event.item);
+		if( event.item.callback ){
+			event.item.callback(event.item);
+		}
 	}
 
 	function handleComplete(){

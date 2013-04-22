@@ -110,9 +110,11 @@ window.onload = function(){
     
 
     window.Controller = new Controller( {
-        player: playee
+        player: playee,
+        render: Render
     });
 
+    Render.SetController(Controller);
 
     /*
     createjs.Ticker.setFPS(60);
@@ -126,24 +128,23 @@ window.onload = function(){
         {src:"resources/world/ceilingrass.png", id:"ceilingrass"},
         {src:"resources/world/groundgrass.png", id:"groundgrass"},
         {src:"resources/world/backfon.png", id:"backfon"},
+
+        {src:"resources/world/upgrass.png", id:"upgrass", callback:upgrassComplete},
+        {src:"resources/world/up_back.png", id:"up_back", callback:up_backComplete},
+        {src:"resources/world/Lava.png", id:"Lava", callback:lavaComplete}
         //{src:"resources/img/WorldAssets-hd_easeljs.json", id:"JSON"}
         //{src:"resources/world/parallaxHill2.png", id:"BG"}
     ];
 
-    var loader = new modelLoader({
-        source :manifest,
-        callback: handlLoad,
-        LOAD: true
-    });
-    
+    var os = [];
 
-    function handlLoad( models ){
+    var w = stage.canvas.width;
+    var h = stage.canvas.height;
 
-        var os = [];
+    var BG;
 
-        var w = stage.canvas.width;
-        var h = stage.canvas.height;
-
+    preLoad();
+    function preLoad(){
 
         //set walls bodys
         var wall = new PGObject({
@@ -159,25 +160,46 @@ window.onload = function(){
             height: h,
             pos: {x: 10/2,y: h/2}
         });
-        /*wall.Set({
-            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
-            type:"polygon",
-            width: 10,
-            height: h,
-            pos: {x: w-10/2,y: h/2}
-        });*/
-        wall.Set({
-            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,w,10)) ),
-            type:"polygon",
-            width: w,
-            height: 10,
-            pos: {x: w/2,y: 10/2}
-        });
         os.push(wall);
 
-        var BG = new contextBack({
+        BG = new contextBack({
             stage:Render.GetStage()
         });
+    }
+
+    var loader = new modelLoader({
+        source :manifest,
+        callback: handlLoad,
+        LOAD: true
+    });
+
+    function upgrassComplete( model ){
+        //console.log( model.tag );        
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);
+        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:3,y:0}, {id:2} );
+        
+    }
+    
+    function up_backComplete( model ){
+        //console.log( model.tag );        
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);
+        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:2,y:0}, {id:1} );
+        
+    }
+
+    function lavaComplete( model ){
+        //console.log( model.tag );        
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);
+        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:2,y:(Render.GetHeight() - 150)}, {id:3} );
+        
+    }
+    
+
+    function handlLoad( models ){
+
         //BG.AddSkin( "/resources/img/iP4_BGtile.jpg" );
 
         for (var i = 0; i < models.length; i++) {
@@ -193,23 +215,23 @@ window.onload = function(){
                 case "backgrass1":
 
                     var b_mp = new createjs.Bitmap(result);
-                    console.log(b_mp);                    
+                    //console.log(b_mp);                    
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/(Render.GetHeight() - 150)} );
+                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:3,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/(Render.GetHeight() - 150)} );
                     break;
                 case "ceilingrass":
-
+                    //console.log(result);
                     var b_mp = new createjs.Bitmap(result);
-                    console.log(b_mp);                    
+                    //console.log(b_mp);                    
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:4,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
                     break;
                 case "groundgrass":
 
                     var b_mp = new createjs.Bitmap(result);
-                    console.log(b_mp);                    
+                    //console.log(b_mp);                    
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    //BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,y:(Render.GetHeight() - 100 )} );
+                    //BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,speed:0,y:(Render.GetHeight() - 100 )} );
                     var ground = new PGObject({  
                         type_: "static",                      
                         world:Model.GetWorld(),
@@ -217,19 +239,22 @@ window.onload = function(){
                     });
 
                     ground.Set({
-                        skin: {rotation: 0, x: 0, y: 0,skin_type: "auto"},
-                        width: w,
+                        skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
+                        skinProperty: {gap:{left:12,right:12}},
+                        width: 5*w,
                         height: 100,
-                        type: "polygon",
-                        pos: {x: w/2,y: (Render.GetHeight() - 50 )}
+                        type: "polygon",/*
+                        speed: 0,*/
+                        pos: {x: 5*w/2,y: (Render.GetHeight() - 50 )}
                     });
-                    os.push(ground);
+                    Model.AddModelToBegin(ground);
+                    //os.splice(0,0,ground);
                     break;
                 case "backfon":
 
                     var b_mp = new createjs.Bitmap(result);
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed: 5,y:0}, {id:0} );
+                    BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed:1,y:0}, {id:0} );
                     break;
                 default:
                     break;
@@ -253,7 +278,7 @@ window.onload = function(){
         /*Render.tick();
         Render.SetFPS( 15 );*/
 
-        //Render.createDebuger(window.innerHeigth/12);
+        //Render.createDebuger( 10 );
 
         Render.render();
 

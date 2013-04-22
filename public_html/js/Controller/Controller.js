@@ -6,7 +6,20 @@ function Controller( prop ){
 
 		this.player = prop.player;
 		this.player.PrepareListen();
+		this.render = prop.render;
 		this.ListenPlayer();
+	}
+
+	this.Update = function(){
+
+		if(this.player.GetPosition().x >= this.render.GetWidth()/2 ){
+			var _pos = {
+				x: (this.player.GetPosition().x - this.render.GetWidth()/2)/this.player.GetPosition().SCALE,
+				y: 0
+			};
+
+			this.render.Translate( _pos );
+		}
 	}
 
 	this.ListenPlayer = function(){

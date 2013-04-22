@@ -37,13 +37,14 @@ function Persona(param){
 	    
 	    this.setRevoluteJoint( {world:this.world, b1:b2, b2:b1, anchor:b2.GetWorldCenter()} );	
 
-	    console.log(this.bodys["wheel"]);		
+	    //console.log(this.bodys["wheel"]);		
 	    
 
 	}
 
 	this.SetSkin = function(skin){
 		this.skins.push(skin);
+		this.STATE = "stand";
 		this.Update();
 	}
 
@@ -191,10 +192,21 @@ function Persona(param){
 			this.skins[0].rotation = this.bodys["box"].GetAngle() * (180 / Math.PI);
 			this.skins[0].x = this.bodys["box"].GetWorldCenter().x * this.SCALE;
 			this.skins[0].y = this.bodys["box"].GetWorldCenter().y * this.SCALE;
-			console.log("\tLOOK HEAR\t");
+			//console.log("\tLOOK HEAR\t");
 			this.skins[0].scaleX = this.skins[0].scaleY = this.SCALE/this._initSCALE;
 
 	}
+
+	this.Translate = function( pos ){
+		this.bodys["box"].SetPosition( new b2Vec2( this.bodys["box"].GetWorldCenter().x - pos.x, this.bodys["box"].GetWorldCenter().y - pos.y ) );
+		this.bodys["wheel"].SetPosition( new b2Vec2( this.bodys["wheel"].GetWorldCenter().x - pos.x, this.bodys["wheel"].GetWorldCenter().y - pos.y ) );
+	}
+
+	this.GetPosition = function(){
+		return {x:this.bodys["box"].GetWorldCenter().x * this.SCALE, y: this.bodys["box"].GetWorldCenter().y * this.SCALE,
+		rotation: this.bodys["box"].GetAngle() * (180 / Math.PI), SCALE: this.SCALE };
+	}
+
 
 }
 

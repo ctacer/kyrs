@@ -44,6 +44,12 @@ function Model( prop ){
 	    }
 	}
 
+	this.Translate = function( pos ){
+		for (var i = 0; i < this.objs.length; i++) {
+	        this.objs[i].Translate(pos);
+	    }
+	}
+
 	this.HandleResize = function( param ){
 		for (var i = 0; i < this.objs.length; i++) {
 			this.objs[i].HandleResize( param );

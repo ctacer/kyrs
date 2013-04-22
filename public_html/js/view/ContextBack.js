@@ -33,7 +33,7 @@ function contextBack( param ){
 		cont.x = 0;cont.y = 0;
 		//this.stage.addChild( cont );
 		if(posi)
-			cont.posId = posi.id;
+			cont.posId = posi.id ;
 		this.skins.push( cont );
 
 		if( url.image ){
@@ -144,25 +144,33 @@ function contextBack( param ){
 			if(this.skins[i].posId != undefined ){
 				ides.push( this.skins[i]);
 				this.skins.splice(i,1);
-				_bmpes.push( this._protoBMPS[i]);
-				this._protoBMPS.splice(i,1);
+				_bmpes.push( this._protoBMPS[i] );
+				this._protoBMPS.splice(i,1);i--;
 			}
 		}
 		ides.sort(function(a,b){
 			return a.posId-b.posId});
 		this.skins = ides.concat(this.skins);
 		this._protoBMPS = _bmpes.concat(this._protoBMPS);
+		//console.log(this.skins);
 	}
 
 	this.Finalize = function(){
 		this.Sort();
 	}
 
+	this.Translate = function( pos ){
+		for (var i = 0; i < this.skins.length; i++) {
+			this.skins[i].x -= pos.x + (this.skins[i].param.speed != undefined)?this.skins[i].param.speed:0;
+			this.skins[i].y -= pos.y ;
+		};
+	}
+
 	this.action = function ( container ){
 
 		for (var i = 0; i < container.getNumChildren(); i++) {
 			var child = container.getChildAt(i);
-			child.x -= container.param.speed || 3;			
+			child.x -= (container.param.speed != undefined)?container.param.speed:3;			
 			if( child.x <= -(child.image.width - 2*child.GAP)* child.scaleX ){
 				//remove from start add to the end
 				//child = container.getChildAt(0).clone();
@@ -187,9 +195,9 @@ function contextBack( param ){
 
 	this.Update = function(){
 
-		for (var i = 0; i < this.skins.length; i++) {
+		/*for (var i = 0; i < this.skins.length; i++) {
 			this.action( this.skins[i] );
-		};
+		};*/
 
 	}
 	this.HandleResize = function( parama ){
