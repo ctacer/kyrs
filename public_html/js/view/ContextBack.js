@@ -97,7 +97,7 @@ function contextBack( param ){
 
 			curContainer.param = param;
 		}
-		console.log(scale);
+		//console.log(scale);
 		var width = (curBMP.image.width - 2*GAP )* scale  ;
 		var count = this._adjustWidth( width );
 
@@ -124,7 +124,7 @@ function contextBack( param ){
 			else
 				_bmp = curContainer.getChildAt(i);
 
-			console.log(scale);
+			//console.log(scale);
 			_bmp.scaleX = _bmp.scaleY = scale ;
 			_bmp.GAP = GAP;
 			_bmp.x = i *( _bmp.image.width - 2*GAP )* _bmp.scaleX ;//(curBMP.image.width - 2*GAP )* scale * _ResizeScale 
@@ -133,7 +133,7 @@ function contextBack( param ){
 		for (var i = count; i < curContainer.getNumChildren(); i++) {
 			curContainer.removeChildAt(i);
 		};
-		console.log(curContainer);
+		//console.log(curContainer);
 	}
 
 	
@@ -193,7 +193,7 @@ function contextBack( param ){
 
 	}
 	this.HandleResize = function( parama ){
-		console.log(parama);
+		//console.log(parama);
 		for(var i = 0; i < this.skins.length; i++) {
 			this.skins[i].param._Resize = parama;
 			this.Set(this.skins[i]);

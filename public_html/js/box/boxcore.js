@@ -31,16 +31,25 @@ window.onload = function(){
     ,   b2ContactListener = Box2D.Dynamics.b2ContactListener    ;
                 
 
-    setToolbox();
+    //setToolbox();
 
 
 
     window.Model = new Model({
-        gravity: {x: 0, y: 10},
-        SCALE: 50        
+        gravity: {x: 0, y: 10}/*,
+        SCALE: 50*/
     });
-	
-    var playee = new Persona(Model.GetScale());
+	var canvas = document.getElementById("canvas");
+    var stage = new createjs.Stage(canvas);
+
+    window.Render = new Renderer({
+        world: Model.GetWorld(),
+        stage:stage /*,
+        SCALE: Model.GetScale() */
+        //model: Model     
+    });
+
+    var playee = new Persona({SCALE: Render.GetSCALE() });
     playee.Initialize(Model.GetWorld(), {x: 100, y: 200});
 
     Model.AddModel( playee );
@@ -69,9 +78,10 @@ window.onload = function(){
         ],
         "animations": {
             
-                "fall":[0, 2], 
-                "run":[3, 11],
-                "flat":[12, 14]
+                "fall":[0, 2,"fall",6], 
+                "run":[3,11,"run",6],
+                "flat":[12, 14, "flat",6],
+                "stand":[11,11,"stand",6]
         },
         "texturepacker": [
                 "SmartUpdateHash: $TexturePacker:SmartUpdate:3d9903c9e34ccb07b382206529c283ec$",
@@ -87,7 +97,7 @@ window.onload = function(){
     ss.getAnimation("fall").next = "fall";
     ss.getAnimation("run").next = "run";
     ss.getAnimation("flat").next = "flat";
-    grant.gotoAndPlay("run");
+    grant.gotoAndPlay("stand");
 /*
     grant.scaleX = 0.12;
     grant.scaleY = 0.24;*/
@@ -95,16 +105,14 @@ window.onload = function(){
     playee.SetSkin( grant );
 
 
-    /*var contcListener = new ContactListener();
-    contcListener.SetUp(world);
-    */
+    var contcListener = new ContactListener();
+    contcListener.SetUp(Model.GetWorld() );
+    
 
     window.Controller = new Controller( {
         player: playee
     });
 
-    var canvas = document.getElementById("canvas");
-    var stage = new createjs.Stage(canvas);
 
     /*
     createjs.Ticker.setFPS(60);
@@ -113,7 +121,7 @@ window.onload = function(){
     
     var skin;
 
-    var manifest = [       
+    var manifest = [
         {src:"resources/world/backgrass1.png", id:"backgrass1"},
         {src:"resources/world/ceilingrass.png", id:"ceilingrass"},
         {src:"resources/world/groundgrass.png", id:"groundgrass"},
@@ -133,13 +141,6 @@ window.onload = function(){
 
         var os = [];
 
-        window.Render = new Renderer({
-            world: Model.GetWorld(),
-            stage:stage ,
-            SCALE: Model.GetScale() 
-            //model: Model     
-        });
-
         var w = stage.canvas.width;
         var h = stage.canvas.height;
 
@@ -147,29 +148,29 @@ window.onload = function(){
         //set walls bodys
         var wall = new PGObject({
             world:Model.GetWorld(),
-            SCALE:Model.GetScale(),
+            SCALE:Render.GetSCALE(),
             type_:"static"
         });
         
         wall.Set({
             skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
             type:"polygon",
-            width: 10/Model.GetScale(),
-            height: h/Model.GetScale(),
+            width: 10,
+            height: h,
             pos: {x: 10/2,y: h/2}
         });
-        wall.Set({
+        /*wall.Set({
             skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
             type:"polygon",
-            width: 10/Model.GetScale(),
-            height: h/Model.GetScale(),
+            width: 10,
+            height: h,
             pos: {x: w-10/2,y: h/2}
-        });
+        });*/
         wall.Set({
             skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,w,10)) ),
             type:"polygon",
-            width: w/Model.GetScale(),
-            height: 10/Model.GetScale(),
+            width: w,
+            height: 10,
             pos: {x: w/2,y: 10/2}
         });
         os.push(wall);
@@ -208,12 +209,25 @@ window.onload = function(){
                     var b_mp = new createjs.Bitmap(result);
                     console.log(b_mp);                    
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,y:(Render.GetHeight() - 100 )} );
+                    //BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,y:(Render.GetHeight() - 100 )} );
+                    var ground = new PGObject({  
+                        type_: "static",                      
+                        world:Model.GetWorld(),
+                        SCALE:Render.GetSCALE()
+                    });
+
+                    ground.Set({
+                        skin: {rotation: 0, x: 0, y: 0,skin_type: "auto"},
+                        width: w,
+                        height: 100,
+                        type: "polygon",
+                        pos: {x: w/2,y: (Render.GetHeight() - 50 )}
+                    });
+                    os.push(ground);
                     break;
                 case "backfon":
 
                     var b_mp = new createjs.Bitmap(result);
-                    console.log(b_mp);                    
                     //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
                     BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed: 5,y:0}, {id:0} );
                     break;
@@ -235,6 +249,11 @@ window.onload = function(){
 
 
         Render.setStatElement(document.getElementById( 'viewport' ));
+
+        /*Render.tick();
+        Render.SetFPS( 15 );*/
+
+        //Render.createDebuger(window.innerHeigth/12);
 
         Render.render();
 

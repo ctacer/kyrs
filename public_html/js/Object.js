@@ -13,15 +13,18 @@ function DynamicObject( param ){
 	this.Set = function( param ){
 
 		var skin = param.skin;
+
 		//fix origin position
 		skin.regX = param.width/2*this.SCALE;
 		skin.regY = param.height/2*this.SCALE;
 		//
 
+		this._initSCALE = this.SCALE;
+
 		var shape = this.getShapeFromSkin({
 			type: param.type,
-			width: param.width,
-			height: param.height,			
+			width: param.width/this.SCALE,
+			height: param.height/this.SCALE		
 		});
 
 		var body = this.getBody( {world:this.world, position:{x:param.pos.x/this.SCALE, y:param.pos.y/this.SCALE },
@@ -32,20 +35,28 @@ function DynamicObject( param ){
 	    
 	}
 
+	this.fitSkin = function(skin){
+		//fit skin size width ...
+	}
+
 	this.Update = function(){
 		for (var i = 0; i < this.bodys.length; i++ ) {
-			
-			this.skins[i].rotation = this.bodys[i].GetAngle() * (180 / Math.PI);
-			this.skins[i].x = this.bodys[i].GetWorldCenter().x * this.SCALE;
-			this.skins[i].y = this.bodys[i].GetWorldCenter().y * this.SCALE;
+			if(this.skins[i].skin_type != "auto"){
+				this.skins[i].rotation = this.bodys[i].GetAngle() * (180 / Math.PI);
+				this.skins[i].x = this.bodys[i].GetWorldCenter().x * this.SCALE;
+				this.skins[i].y = this.bodys[i].GetWorldCenter().y * this.SCALE;
+				console.log("\tLOOK HEAR\t");
+				this.skins[i].scaleX = this.skins[i].scaleY = this.SCALE/this._initSCALE;
+			}
 
 		};
 	}
 
 	this.HandleResize = function( param ){
-		for (var i = 0; i < this.bodys.length; i++) {
+		/*for (var i = 0; i < this.bodys.length; i++) {
 			this.bodys[i].SetPosition( new b2Vec2(this.bodys[i].GetPosition().x*param.w, this.bodys[i].GetPosition().y*param.h));
-		};
+		};*/
+		this.SCALE = param.SCALE;
 	}
 	
 	

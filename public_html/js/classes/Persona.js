@@ -1,8 +1,9 @@
 
 
-function Persona(pxTmtr){
+function Persona(param){
 
-	this.PixelToMeter = pxTmtr || 50;
+	this.SCALE = param.SCALE || 50;
+	this._initSCALE = this.SCALE;
 	this.bodys = {};
 	this.skins = [];
 	this.STATE = "sleep";
@@ -11,6 +12,7 @@ function Persona(pxTmtr){
 	this.Initialize = function(world,pos){
 
 		this.world = world;
+		this.name = "Player";
 
 
 		var b1,b2,joint;
@@ -18,18 +20,18 @@ function Persona(pxTmtr){
 	    var jointExperimentCubeShape = new b2PolygonShape();
 	    jointExperimentCubeShape.SetAsBox(0.2,0.6);
 
-	    b1 = this.getBody( {world:this.world, position:{x:pos.x/this.PixelToMeter, y:pos.y/this.PixelToMeter },
-				shape:jointExperimentCubeShape ,bodyProperty:{fixedRotation : true, userData:'player'/*, linearDamping: 0.4*/} } );
+	    b1 = this.getBody( {world:this.world, position:{x:pos.x/this.SCALE, y:pos.y/this.SCALE },
+				shape:jointExperimentCubeShape ,bodyProperty:{fixedRotation : true, userData:this/*, linearDamping: 0.4*/} } );
 
 	    
-	    this.bodys['box'] = b1;	    
+	    this.bodys['box'] = b1;
 
 	    var jointExperimentCircleShape = new b2CircleShape();
 	    jointExperimentCircleShape.SetRadius(0.2);
 
-	    b2 = this.getBody( {world:this.world, position:{x:pos.x/this.PixelToMeter, y:pos.y/this.PixelToMeter + 0.6 },
-				shape:jointExperimentCircleShape, bodyProperty:{ userData:'player'/*, linearDamping: 0.4*/, angularDamping: 50}/*, 
-				fixtureProperty: {}*/ } );
+	    b2 = this.getBody( {world:this.world, position:{x:pos.x/this.SCALE, y:pos.y/this.SCALE + 0.6 },
+				shape:jointExperimentCircleShape, bodyProperty:{ userData:this/*, linearDamping: 0.6, angularDamping: 50*/}, 
+				fixtureProperty: {friction: 100} } );
 
 	    this.bodys['wheel'] = b2;
 	    
@@ -78,7 +80,8 @@ function Persona(pxTmtr){
 
 		for (var key in this._events) {
 			if(this._events[key].value){
-				//console.log(this);
+				this.bodys['wheel'].SetAngularDamping(0);
+				//this.bodys['wheel'].SetLinearDamping(0);
 				this._events[key].move(this);
 			}
 		};
@@ -89,70 +92,86 @@ function Persona(pxTmtr){
 
 	function moveLeft( self ){
 
-		if(self.STATE != "left"){
+		if(self.STATE == "stand"){
 			self.skins[0].gotoAndPlay("run");
+			self.STATE = "left";
 		}
-		self.STATE = "left";
-		self.bodys['wheel'].SetAngularVelocity( -Math.PI*40 );
+		self.bodys['wheel'].SetAngularVelocity( -Math.PI*10 );
 
 	}
 
 	function stopLeft( self ){
 
-		self.STATE = "stand";
-		//self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
-		self.skins[0].gotoAndPlay("stand");
+		if(self.STATE != "flat"){
+			self.STATE = "stand";
+			//self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
+			self.skins[0].gotoAndPlay("stand");
+		}
+		self.bodys['wheel'].SetAngularDamping(100);
+
 
 	}
 
 	function moveRight( self ){
 
-		if(self.STATE != "right"){
-			self.skins[0].gotoAndPlay("run");
+		if(self.STATE == "stand"){
+			self.skins[0].gotoAndPlay("run");			
+			self.STATE = "right";				
 		}
-		
-		self.STATE = "right";				
-		self.bodys['wheel'].SetAngularVelocity( Math.PI*40 );
+		self.bodys['wheel'].SetAngularVelocity( Math.PI*10 );
 		//self.bodys["wheel"].SetAngularDamping(50);
 
 	}
 
 	function stopRight( self ){
 
-		self.STATE = "stand";
+		if(self.STATE != "flat"){
+			self.STATE = "stand";
+			self.skins[0].gotoAndPlay("stand");
+		}
 		//this.bodys['box'].SetLinearVelocity(new b2Vec2(0,0));
 		//this.bodys['wheel'].SetLinearVelocity(new b2Vec2(0,0));
 		//self.bodys["wheel"].SetAngularDamping(20);
-		self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
-		self.skins[0].gotoAndPlay("stand");			
+		//self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
+		self.bodys['wheel'].SetAngularDamping(100);
+		//self.bodys['wheel'].SetLinearDamping(100);
+		//console.log(self.bodys['wheel']);
+		//self.skins[0].gotoAndPlay("run");			
 
 	}
 
 	function moveUp( self ){
 		//catch collide with ground body
 
-		if(self.STATE != "jump"){
-			self.skins[0].gotoAndPlay("jump");
+		if(self.STATE != "flat"){
+			self.skins[0].gotoAndPlay("flat");
+			//this.bodys['wheel'].ApplyImpulse( new b2Vec2(0,-1), this.bodys['wheel'].GetWorldCenter() );
+			self.bodys['box'].ApplyImpulse( new b2Vec2(0,-4.0), self.bodys['box'].GetWorldCenter() );
+			//self.bodys['box'].SetLinearVelocity( new b2Vec2(0,-3) );
 		}
-		self.STATE = "jump";
-		//this.bodys['wheel'].ApplyImpulse( new b2Vec2(0,-1), this.bodys['wheel'].GetWorldCenter() );
-		self.bodys['box'].ApplyImpulse( new b2Vec2(0,-1), self.bodys['box'].GetWorldCenter() );
-		//self.bodys['box'].SetLinearVelocity( new b2Vec2(0,-3) );
+		self.STATE = "flat";
 
 	}
 
 	function stopUp( self ){
 		//catch collide with ground body
 
-		self.STATE = "stand";
+		//self.STATE = "stand";
 		//this.skins[0].gotoAndPlay("stand");
 		
 
 	}
 
+	this._land = function(){
+		this.STATE = "stand";
+		this.skins[0].gotoAndPlay("stand");
+		this.bodys['wheel'].SetAngularDamping(100);
+	}
+
 	this.HandleResize = function( param ){
 		//for (var i = 0; i < this.bodys.length; i++) {
-			this.bodys["box"].SetPosition( new b2Vec2(this.bodys["box"].GetPosition().x*param.w, this.bodys["box"].GetPosition().y*param.h));
+			//this.bodys["box"].SetPosition( new b2Vec2(this.bodys["box"].GetPosition().x*param.w, this.bodys["box"].GetPosition().y*param.h));
+			this.SCALE = param.SCALE;
 		//};
 	}
 
@@ -168,9 +187,12 @@ function Persona(pxTmtr){
 				this.i++;*/
 
 			this.move();
+
 			this.skins[0].rotation = this.bodys["box"].GetAngle() * (180 / Math.PI);
-			this.skins[0].x = this.bodys["box"].GetWorldCenter().x * this.PixelToMeter;
-			this.skins[0].y = this.bodys["box"].GetWorldCenter().y * this.PixelToMeter;
+			this.skins[0].x = this.bodys["box"].GetWorldCenter().x * this.SCALE;
+			this.skins[0].y = this.bodys["box"].GetWorldCenter().y * this.SCALE;
+			console.log("\tLOOK HEAR\t");
+			this.skins[0].scaleX = this.skins[0].scaleY = this.SCALE/this._initSCALE;
 
 	}
 

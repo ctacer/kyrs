@@ -11,7 +11,6 @@ function Model( prop ){
 	this.AddModelToBegin = function( obj ){
 		if( obj.constructor.toString().match( /\bArray\b/) == null){
 			this.objs.splice(0,0,obj);
-			console.log(this.objs);
 		}
 	}
 
@@ -19,17 +18,19 @@ function Model( prop ){
 		return this.world;
 	}
 
-	this.GetScale = function(){
+	/*this.GetScale = function(){
 		return this.SCALE;
 	}
-
+	*/
 	this.Initialize = function( prop ){
 		this.objs = prop.objs || [];
+		this.inWorldHeight = 12;// meters 
+		this.inWorldWidth = 15;// meters
 		this.world = new b2World(
 	        new b2Vec2(prop.gravity.x, prop.gravity.y)    //gravity
 	        //,  true                 //allow sleep
 	    );
-	    this.SCALE = prop.SCALE;
+	    //this.SCALE = prop.SCALE;
 
 	}
 

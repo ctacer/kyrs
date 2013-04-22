@@ -11,26 +11,33 @@ function ContactListener(){
 
 			if( !contact.GetFixtureA().GetBody().GetUserData() || !contact.GetFixtureB().GetBody().GetUserData()  )
 				return;
-			
-			console.log( contact.GetFixtureA().GetBody().GetUserData().toUpperCase() );
-			console.log( contact.GetFixtureB().GetBody().GetUserData().toUpperCase() );
+/*
+			if( contact.GetFixtureA().GetBody().GetUserData().name && contact.GetFixtureA().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'GROUND' ){
+				//console.log("flat \'n\' land handler");
+				var player = contact.GetFixtureA().GetBody().GetUserData();
+				if(player.STATE == "flat"){
+					player._land();
+				}else{
 
-			if( contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'GROUND' || contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'GROUND' ){
-				//means some body contact other body with userData property of 'GROUND'
-
-				console.log( 'GROUND body has been contacted' );
+				}
 			}
-
-			if( contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'PLAYER' || contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
-				console.log( 'PLAYER body has been contacted' );
+*/
+			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'GROUND' ){
+				//console.log("flat \'n\' land handler");
+				var player = contact.GetFixtureB().GetBody().GetUserData();
+				if(player.STATE == "flat"){
+					player._land();
+				}else{
+					
+				}
 			}
-			console.log('\n');
+			//console.log('\n');
 
 			//SpecialButton
-			if( contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'SPECIALBUTTON' && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
+			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'SPECIALBUTTON' && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
 				throwNewGravityFeature();
 			}
-			if( contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'SPECIALBUTTON' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
+			if( contact.GetFixtureA().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'SPECIALBUTTON' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
 				throwNewGravityFeature();
 			}
 			
@@ -51,11 +58,11 @@ function ContactListener(){
 			if( !contact.GetFixtureA().GetBody().GetUserData() || !contact.GetFixtureB().GetBody().GetUserData()  )
 				return;
 			
-			if( contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'LADDER' && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
+			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'LADDER' && contact.GetFixtureB().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' ){
 				//console.log(contact);
 				contact.SetEnabled(false);
 			}
-			if( contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'LADDER' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
+			if( contact.GetFixtureA().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'LADDER' && contact.GetFixtureA().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' ){
 				//console.log(contact);
 				contact.SetEnabled(false);
 			}
