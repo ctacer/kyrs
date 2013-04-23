@@ -13,21 +13,25 @@ function DynamicObject( param ){
 	
 	this.Set = function( param ){
 
-		var skin = this.fitSkin(param.skin, param.width, param.height ,param.skinProperty );
 		//console.log(skin);
-
+		if(!param.scale || !param.scale.h || !param.scale.w)
+			param.scale = {h:1, w:1};
+		if(!param.gap || !param.gap.y)
+			param.gap = {y:0};
 		//fix origin position
+		var skin = this.fitSkin(param.skin, param.width, param.height ,param.skinProperty );
 		skin.regX = param.width*this.SCALE/(this._initSCALE*2);
 		skin.regY = param.height*this.SCALE/(this._initSCALE*2);
 		//
+		skin.gap = param.gap;
 
 		var shape = this.getShapeFromSkin({
 			type: param.type,
-			width: param.width/this.SCALE,
-			height: param.height/this.SCALE		
+			width: param.width/(this.SCALE/**param.scale.w*/),
+			height: (param.height - param.gap.y)/(this.SCALE/**param.scale.h*/)
 		});
 
-		var body = this.getBody( {world:this.world, position:{x:param.pos.x/this.SCALE, y:param.pos.y/this.SCALE },
+		var body = this.getBody( {world:this.world, position:{x:param.pos.x/this.SCALE, y:(param.pos.y + param.gap.y/2)/this.SCALE },
 				shape:shape ,bodyProperty:{type: this.bodyType, fixedRotation: true, userData:param.bodyName || 'GROUND'/*, linearDamping: 0.4*/} } );
 	    
 	    if(param.speed){
@@ -58,7 +62,7 @@ function DynamicObject( param ){
 		for (var i = 0; i < count; i++) {
 			var _skin = skin.clone();
 			_skin.scaleX = _skin.scaleY = (height/skin.image.height) ;//scale only for skin
-			_skin.x = i*(skin.image.width  - GAP.left - GAP.right )*(height/skin.image.height) ;
+			_skin.x =  i*(skin.image.width  - GAP.left - GAP.right )*(height/skin.image.height) ;
 			cont.addChild(_skin);
 		};
 		cont.scaleX = cont.scaleY = this.SCALE/this._initSCALE; //dynamic scale only for container
@@ -71,7 +75,7 @@ function DynamicObject( param ){
 			if(this.skins[i].skin_type != "auto"){
 				this.skins[i].rotation = this.bodys[i].GetAngle() * (180 / Math.PI);
 				this.skins[i].x = this.bodys[i].GetWorldCenter().x * this.SCALE;
-				this.skins[i].y = this.bodys[i].GetWorldCenter().y * this.SCALE;
+				this.skins[i].y = (this.bodys[i].GetWorldCenter().y) * this.SCALE - this.skins[i].gap.y/2*this.SCALE/this._initSCALE;
 				//console.log("\tLOOK HEAR\t");
 				this.skins[i].scaleX = this.skins[i].scaleY = this.SCALE/this._initSCALE;
 			}

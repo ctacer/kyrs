@@ -160,9 +160,11 @@ function contextBack( param ){
 	}
 
 	this.Translate = function( pos ){
+		//if(Math.floor(pos.x *pos.SCALE) <= 0)return;
+
 		for (var i = 0; i < this.skins.length; i++) {
-			this.skins[i].x -= pos.x + (this.skins[i].param.speed != undefined)?this.skins[i].param.speed:0;
-			this.skins[i].y -= pos.y ;
+			this.skins[i].x -= pos.x*pos.SCALE + (this.skins[i].param.speed != undefined)?this.skins[i].param.speed:0;
+			this.skins[i].y -= pos.y *pos.SCALE;
 		};
 	}
 

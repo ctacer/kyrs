@@ -12,13 +12,19 @@ function Controller( prop ){
 
 	this.Update = function(){
 
+		//console.log( this.player.GetPosition().x );
+
 		if(this.player.GetPosition().x >= this.render.GetWidth()/2 ){
 			var _pos = {
 				x: (this.player.GetPosition().x - this.render.GetWidth()/2)/this.player.GetPosition().SCALE,
-				y: 0
+				y: 0,
+				SCALE: this.player.GetPosition().SCALE 
 			};
-
-			this.render.Translate( _pos );
+			//console.log(_pos.x*this.player.GetPosition().SCALE );
+			if(Math.floor(_pos.x *_pos.SCALE) <= 0)return;
+			//if( Math.floor( _pos.x*this.player.GetPosition().SCALE ) > 0){
+				this.render.Translate( _pos );
+			//}
 		}
 	}
 

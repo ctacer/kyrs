@@ -243,6 +243,8 @@ window.onload = function(){
                         skinProperty: {gap:{left:12,right:12}},
                         width: 5*w,
                         height: 100,
+                        //scale: {h:3,w:1},
+                        gap:{y:50},
                         type: "polygon",/*
                         speed: 0,*/
                         pos: {x: 5*w/2,y: (Render.GetHeight() - 50 )}
@@ -278,7 +280,7 @@ window.onload = function(){
         /*Render.tick();
         Render.SetFPS( 15 );*/
 
-        //Render.createDebuger( 10 );
+        //Render.createDebuger( window.innerHeight/12 );
 
         Render.render();
 
