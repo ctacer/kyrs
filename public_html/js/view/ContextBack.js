@@ -91,13 +91,13 @@ function contextBack( param ){
 				curContainer.x = param.x ;
 			if(param.y)
 				curContainer.y = param.y ;
-			if(param.speed){
-				//
+			if(!param.speed){
+				param.speed = 1;
 			}
 
 			curContainer.param = param;
 		}
-		//console.log(scale);
+		////console.log(scale);
 		var width = (curBMP.image.width - 2*GAP )* scale  ;
 		var count = this._adjustWidth( width );
 
@@ -124,7 +124,7 @@ function contextBack( param ){
 			else
 				_bmp = curContainer.getChildAt(i);
 
-			//console.log(scale);
+			////console.log(scale);
 			_bmp.scaleX = _bmp.scaleY = scale ;
 			_bmp.GAP = GAP;
 			_bmp.x = i *( _bmp.image.width - 2*GAP )* _bmp.scaleX ;//(curBMP.image.width - 2*GAP )* scale * _ResizeScale 
@@ -133,7 +133,7 @@ function contextBack( param ){
 		for (var i = count; i < curContainer.getNumChildren(); i++) {
 			curContainer.removeChildAt(i);
 		};
-		//console.log(curContainer);
+		////console.log(curContainer);
 	}
 
 	
@@ -152,7 +152,7 @@ function contextBack( param ){
 			return a.posId-b.posId});
 		this.skins = ides.concat(this.skins);
 		this._protoBMPS = _bmpes.concat(this._protoBMPS);
-		//console.log(this.skins);
+		////console.log(this.skins);
 	}
 
 	this.Finalize = function(){
@@ -160,11 +160,20 @@ function contextBack( param ){
 	}
 
 	this.Translate = function( pos ){
-		//if(Math.floor(pos.x *pos.SCALE) <= 0)return;
+
+		console.log(pos.x*pos.SCALE);
+		console.log(this.skins[0].x);
 
 		for (var i = 0; i < this.skins.length; i++) {
-			this.skins[i].x -= pos.x*pos.SCALE + (this.skins[i].param.speed != undefined)?this.skins[i].param.speed:0;
-			this.skins[i].y -= pos.y *pos.SCALE;
+			if( Math.abs(pos.x*pos.SCALE) >= 1.5 ){
+				this.skins[i].x -= pos.x*pos.SCALE*this.skins[i].param.speed;
+				//this.skins[i].y -= pos.y *pos.SCALE;
+			}
+			else{
+				//console.log( pos.x*pos.SCALE );
+				this.skins[i].x -= pos.x*pos.SCALE;
+				//this.skins[i].y -= pos.y *pos.SCALE;
+			}
 		};
 	}
 
@@ -203,7 +212,7 @@ function contextBack( param ){
 
 	}
 	this.HandleResize = function( parama ){
-		//console.log(parama);
+		////console.log(parama);
 		for(var i = 0; i < this.skins.length; i++) {
 			this.skins[i].param._Resize = parama;
 			this.Set(this.skins[i]);

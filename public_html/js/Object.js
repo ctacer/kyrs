@@ -95,6 +95,10 @@ function DynamicObject( param ){
 		};*/
 		this.SCALE = param.SCALE;
 	}
+	this.GetPosition = function(){
+		return {x:this.bodys[0].GetWorldCenter().x * this.SCALE, y: this.bodys[0].GetWorldCenter().y * this.SCALE,
+		rotation: this.bodys[0].GetAngle() * (180 / Math.PI), SCALE: this.SCALE };
+	}
 	
 	
 }

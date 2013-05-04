@@ -49,7 +49,29 @@
  
 </head>
 <body>
-    
+
+    <div id="start_background"></div>
+
+    <div id="control_panel">
+        <div id="menu">
+            <div class="menu_list" id="start_button">Start</div>
+            <div class="menu_list" id="settings_button">Settings</div>
+            <div class="menu_list" id="help_button">Help</div>
+        </div>
+        <div id="settings_panel">
+            <div></div>
+        </div>
+        <div id="help_panel">
+            <div class="overlap"></div>
+            <div id="help_panel_inside">
+                <div class="close_button" id="close_button"></div>
+                <div class="optional_list">Fullscreen - press F</div>
+                <div class="optional_list">Pause - press P</div>
+                <div class="optional_list">Movement - arrows</div>
+            </div>
+        </div>
+    </div>
+    <div class="overlap" id="layer1"></div>
     <div id="viewport"></div>
     <canvas id="canvas"></canvas>
     <!--

@@ -3,6 +3,72 @@
 //boxcore
 
 window.onload = function(){
+
+    window.GAME = { STATE:"GAME_WAIT", _states:{"wait":"GAME_WAIT","ready": "GAME_READY","on": "GAME_ON","pause": "GAME_PAUSE","over": "GAME_OVER"} };
+    GAME.ready = function(){
+        this.STATE = this._states["ready"];
+        document.getElementById('layer1').style.display = "inline";
+        document.getElementById('control_panel').style.display = "inline";
+    }
+    GAME.toogle = function(){}
+
+
+    document.getElementById("start_button").addEventListener('click',function(){
+        GAME.toogle();
+    },false);
+
+    document.getElementById("settings_button").addEventListener('click',function(){
+        
+    },false);
+
+
+    document.getElementById("help_button").addEventListener('click',function(){
+            var el = document.getElementById("help_panel");
+            el.style.display = "inline";
+    },false);
+    
+    document.getElementById("close_button").addEventListener('click',function(){
+            var el = document.getElementById("help_panel");
+            el.style.display = "none";
+    },false);
+
+    window.addEventListener('keydown',function(event){
+        //console.log(event.keyCode);
+        if(event.keyCode == 70){//F key
+            toggleFullScreen();            
+        }
+        if(event.keyCode == 80){//P key
+            GAME.toogle();
+        }
+    },false);
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement &&    // alternative standard method
+          !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.cancelFullScreen) {
+          document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        }
+      }
+    }
+
+    load();
+
+
+}
+
+function load(){
 	
 
 	b2Vec2 = Box2D.Common.Math.b2Vec2
@@ -49,73 +115,17 @@ window.onload = function(){
         //model: Model     
     });
 
-    var playee = new Persona({SCALE: Render.GetSCALE() });
+    window.playee = new Persona({SCALE: Render.GetSCALE() });
     playee.Initialize(Model.GetWorld(), {x: 100, y: 200});
 
     Model.AddModel( playee );
-    //Model.objs[0].bodys['wheel'].SetAngularVelocity(15);
-
-
-    //spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
-    spriteSheet = {
-        "images": ["resources/persona/Pixie/pixie_easel.png"],"frames": [
-
-            [104, 193, 97, 100], 
-            [2, 2, 105, 102], 
-            [2, 200, 96, 104], 
-            [203, 194, 94, 93], 
-            [407, 99, 94, 97], 
-            [2, 106, 100, 92], 
-            [318, 2, 99, 95], 
-            [311, 99, 94, 97], 
-            [2, 406, 93, 92], 
-            [2, 306, 93, 98], 
-            [215, 2, 101, 94], 
-            [211, 98, 98, 94], 
-            [109, 2, 104, 93], 
-            [109, 97, 100, 94], 
-            [109, 2, 104, 93]
-        ],
-        "animations": {
-            
-                "fall":[0, 2,"fall",6], 
-                "run":[3,11,"run",6],
-                "flat":[12, 14, "flat",6],
-                "stand":[11,11,"stand",6]
-        },
-        "texturepacker": [
-                "SmartUpdateHash: $TexturePacker:SmartUpdate:3d9903c9e34ccb07b382206529c283ec$",
-                "Created with TexturePacker (http://www.texturepacker.com) for EasalJS"
-        ]
-    }
-
-    var ss = new createjs.SpriteSheet(spriteSheet);
-    //ss.addEventListener("complete", function(event){});
-    grant = new createjs.BitmapAnimation(ss);
-
-    // Set up looping
-    ss.getAnimation("fall").next = "fall";
-    ss.getAnimation("run").next = "run";
-    ss.getAnimation("flat").next = "flat";
-    grant.gotoAndPlay("stand");
-/*
-    grant.scaleX = 0.12;
-    grant.scaleY = 0.24;*/
-
-    playee.SetSkin( grant );
 
 
     var contcListener = new ContactListener();
     contcListener.SetUp(Model.GetWorld() );
-    
 
-    window.Controller = new Controller( {
-        player: playee,
-        render: Render
-    });
 
-    Render.SetController(Controller);
-
+    //spriteSheet ={"animations": { "stand":[59], "run": [0, 25], "jump": [26, 63]}, "images": ["/resources/world/runningGrant.png"], "frames": {"regX": 165.75/2, "height": 292.5, "count": 64, "regY": 292.5/2, "width": 165.75}};
     /*
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", handleTick);
@@ -124,10 +134,11 @@ window.onload = function(){
     var skin;
 
     var manifest = [
-        {src:"resources/world/backgrass1.png", id:"backgrass1"},
-        {src:"resources/world/ceilingrass.png", id:"ceilingrass"},
-        {src:"resources/world/groundgrass.png", id:"groundgrass"},
-        {src:"resources/world/backfon.png", id:"backfon"},
+        {src:"resources/persona/Pixie/pixie_easel.png", id:"player", callback:playerComplete},
+        {src:"resources/world/backgrass1.png", id:"backgrass1", callback:backgrass1Complete},
+        {src:"resources/world/ceilingrass.png", id:"ceilingrass", callback:ceilingrassComplete},
+        {src:"resources/world/groundgrass.png", id:"groundgrass", callback:groundgrassComplete},
+        {src:"resources/world/backfon.png", id:"backfon", callback:backfonComplete},
 
         {src:"resources/world/upgrass.png", id:"upgrass", callback:upgrassComplete},
         {src:"resources/world/up_back.png", id:"up_back", callback:up_backComplete},
@@ -144,6 +155,7 @@ window.onload = function(){
     var BG;
 
     preLoad();
+
     function preLoad(){
 
         //set walls bodys
@@ -174,18 +186,115 @@ window.onload = function(){
     });
 
     function upgrassComplete( model ){
-        //console.log( model.tag );        
+        //console.log( model.tag );
         var b_mp = new createjs.Bitmap( model.tag );
         //console.log(b_mp);
-        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:3,y:0}, {id:2} );
+        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.3,y:0}, {id:2} );
         
+    }
+
+    function backgrass1Complete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);                    
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+        BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:1.3,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/(Render.GetHeight() - 150)} );
+    }
+
+    function ceilingrassComplete( model ){
+        //console.log(result);
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);                    
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+        BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:1.4,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+    }
+
+    function groundgrassComplete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);                    
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+        //BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,speed:0,y:(Render.GetHeight() - 100 )} );
+        var ground = new PGObject({  
+            type_: "static",                      
+            world:Model.GetWorld(),
+            SCALE:Render.GetSCALE()
+        });
+
+        ground.Set({
+            skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
+            skinProperty: {gap:{left:12,right:12}},
+            width: 5*w,
+            height: 100,
+            //scale: {h:3,w:1},
+            gap:{y:50},
+            type: "polygon",/*
+            speed: 0,*/
+            pos: {x: 5*w/2,y: (Render.GetHeight() - 50 )}
+        });
+        Model.AddModelToBegin(ground);
+
+        Render.SetEdges( {left:0, right:5*w} );
+        //os.splice(0,0,ground);
+    }
+
+    function backfonComplete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed:1.1,y:0}, {id:0} );
+    }
+
+    function playerComplete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+
+        spriteSheet = {
+            "images": [model.tag],"frames": [
+
+                [104, 193, 97, 100], 
+                [2, 2, 105, 102], 
+                [2, 200, 96, 104], 
+                [203, 194, 94, 93], 
+                [407, 99, 94, 97], 
+                [2, 106, 100, 92], 
+                [318, 2, 99, 95], 
+                [311, 99, 94, 97], 
+                [2, 406, 93, 92], 
+                [2, 306, 93, 98], 
+                [215, 2, 101, 94], 
+                [211, 98, 98, 94], 
+                [109, 2, 104, 93], 
+                [109, 97, 100, 94], 
+                [109, 2, 104, 93]
+            ],
+            "animations": {
+                
+                    "fall":[0, 2,"fall",6], 
+                    "run":[3,11,"run",6],
+                    "flat":[12, 14, "flat",6],
+                    "stand":[11,11,"stand",6]
+            }
+        }
+
+        var ss = new createjs.SpriteSheet(spriteSheet);
+        //ss.addEventListener("complete", function(event){});
+        grant = new createjs.BitmapAnimation(ss);
+
+        // Set up looping
+        ss.getAnimation("fall").next = "fall";
+        ss.getAnimation("run").next = "run";
+        ss.getAnimation("flat").next = "flat";
+        grant.gotoAndPlay("stand");
+    /*
+        grant.scaleX = 0.12;
+        grant.scaleY = 0.24;*/
+
+        playee.SetSkin( grant );
+
     }
     
     function up_backComplete( model ){
         //console.log( model.tag );        
         var b_mp = new createjs.Bitmap( model.tag );
         //console.log(b_mp);
-        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:2,y:0}, {id:1} );
+        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.2,y:0}, {id:1} );
         
     }
 
@@ -193,7 +302,7 @@ window.onload = function(){
         //console.log( model.tag );        
         var b_mp = new createjs.Bitmap( model.tag );
         //console.log(b_mp);
-        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:2,y:(Render.GetHeight() - 150)}, {id:3} );
+        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.2,y:(Render.GetHeight() - 150)}, {id:3} );
         
     }
     
@@ -201,7 +310,7 @@ window.onload = function(){
     function handlLoad( models ){
 
         //BG.AddSkin( "/resources/img/iP4_BGtile.jpg" );
-
+/*
         for (var i = 0; i < models.length; i++) {
             var item = models[i];
             var id = item.id;
@@ -213,56 +322,11 @@ window.onload = function(){
 
             switch (id) {
                 case "backgrass1":
-
-                    var b_mp = new createjs.Bitmap(result);
-                    //console.log(b_mp);                    
-                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:3,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/(Render.GetHeight() - 150)} );
-                    break;
-                case "ceilingrass":
-                    //console.log(result);
-                    var b_mp = new createjs.Bitmap(result);
-                    //console.log(b_mp);                    
-                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:4,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    break;
-                case "groundgrass":
-
-                    var b_mp = new createjs.Bitmap(result);
-                    //console.log(b_mp);                    
-                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    //BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 20,speed:0,y:(Render.GetHeight() - 100 )} );
-                    var ground = new PGObject({  
-                        type_: "static",                      
-                        world:Model.GetWorld(),
-                        SCALE:Render.GetSCALE()
-                    });
-
-                    ground.Set({
-                        skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
-                        skinProperty: {gap:{left:12,right:12}},
-                        width: 5*w,
-                        height: 100,
-                        //scale: {h:3,w:1},
-                        gap:{y:50},
-                        type: "polygon",/*
-                        speed: 0,*/
-                        pos: {x: 5*w/2,y: (Render.GetHeight() - 50 )}
-                    });
-                    Model.AddModelToBegin(ground);
-                    //os.splice(0,0,ground);
-                    break;
-                case "backfon":
-
-                    var b_mp = new createjs.Bitmap(result);
-                    //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-                    BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed:1,y:0}, {id:0} );
-                    break;
                 default:
                     break;
             }
         }
-
+*/
 
         Model.AddModel( os );
 
@@ -277,12 +341,45 @@ window.onload = function(){
 
         Render.setStatElement(document.getElementById( 'viewport' ));
 
+        window.Controller = new Controller( {
+            player: playee,
+            render: Render
+        });
+
+        Render.SetController(Controller);
+
+        GAME.ready();
+
+        GAME.toogle = function(){
+            if( this.STATE == this._states["ready"] ){
+                window.Render.ToogleGame();
+                GAME.STATE = GAME._states["pause"];
+            }
+            if(this.STATE == this._states["pause"]){
+                GAME.STATE = GAME._states["on"];
+                Controller.Toogle();
+                window.Render.ToogleGame();
+                document.getElementById("control_panel").style.display = "none";
+                document.getElementById("layer1").style.display = "none";
+            }
+            else if(this.STATE == this._states["on"]){
+                GAME.STATE = GAME._states["pause"];
+                Controller.Toogle();
+                window.Render.ToogleGame();
+                document.getElementById("control_panel").style.display = "inline";
+                document.getElementById("layer1").style.display = "inline";
+                return;
+            }
+        }
+
+        Render.render();
+
         /*Render.tick();
         Render.SetFPS( 15 );*/
 
         //Render.createDebuger( window.innerHeight/12 );
 
-        Render.render();
+        //Render.render();
 
     }
 

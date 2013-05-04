@@ -22,7 +22,7 @@ function Persona(param){
 
 	    b1 = this.getBody( {world:this.world, position:{x:pos.x/this.SCALE, y:pos.y/this.SCALE },
 				shape:jointExperimentCubeShape ,bodyProperty:{fixedRotation : true, userData:this/*, linearDamping: 0.4*/}, 
-				fixtureProperty: {friction: 500, restitution: 0, density: 10} } );
+				fixtureProperty: {friction: 100, restitution: 0, density: 10} } );
 
 	    
 	    this.bodys['box'] = b1;
@@ -32,7 +32,7 @@ function Persona(param){
 
 	    b2 = this.getBody( {world:this.world, position:{x:pos.x/this.SCALE, y:pos.y/this.SCALE + 0.5 },
 				shape:jointExperimentCircleShape, bodyProperty:{ userData:this/*, linearDamping: 0.6, angularDamping: 50*/}, 
-				fixtureProperty: {friction: 500, restitution: 0, density: 0.8} } );
+				fixtureProperty: {friction: 100, restitution: 0, density: 0.8} } );
 
 	    this.bodys['wheel'] = b2;
 	    
@@ -88,6 +88,7 @@ function Persona(param){
 		for (var key in this._events) {
 			if(this._events[key].value){
 				this.bodys['wheel'].SetAngularDamping(0);
+				this.bodys['wheel'].SetAngularVelocity( Math.PI*0 );
 				//this.bodys['wheel'].SetLinearDamping(0);
 				this._events[key].move(this);
 			}
@@ -114,7 +115,7 @@ function Persona(param){
 			//self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
 			self.skins[0].gotoAndPlay("stand");
 		}
-		self.bodys['wheel'].SetAngularDamping(500);
+		self.bodys['wheel'].SetAngularDamping(5000);
 
 
 	}
@@ -125,6 +126,7 @@ function Persona(param){
 			self.skins[0].gotoAndPlay("run");			
 			self.STATE = "right";				
 		}
+		self.bodys['wheel'].SetAngularDamping(0);
 		self.bodys['wheel'].SetAngularVelocity( Math.PI*2 );
 		//self.bodys["wheel"].SetAngularDamping(50);
 
@@ -140,7 +142,9 @@ function Persona(param){
 		//this.bodys['wheel'].SetLinearVelocity(new b2Vec2(0,0));
 		//self.bodys["wheel"].SetAngularDamping(20);
 		//self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
-		self.bodys['wheel'].SetAngularDamping(500);
+		self.bodys['wheel'].SetAngularDamping(200);
+		//self.bodys['wheel'].ApplyTorque( - Math.PI*200 );
+		//self.bodys['wheel'].SetAngularVelocity( Math.PI*0 );
 		//self.bodys['wheel'].SetLinearDamping(100);
 		//console.log(self.bodys['wheel']);
 		//self.skins[0].gotoAndPlay("run");			
@@ -169,10 +173,19 @@ function Persona(param){
 
 	}
 
+	this.GetMovement = function(){
+
+		return { left:this._events["37"].value, 
+				up:this._events["38"].value,
+				right:this._events["39"].value
+			};
+
+	}
+
 	this._land = function(){
 		this.STATE = "stand";
 		this.skins[0].gotoAndPlay("stand");
-		this.bodys['wheel'].SetAngularDamping(500);
+		this.bodys['wheel'].SetAngularDamping(5000);
 	}
 
 	this.GetState = function(){

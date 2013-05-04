@@ -4,6 +4,37 @@ function Renderer ( param ){
 		this.model = model;
 		this.FillStage();
 	}
+	this.EdgeOfWorld = {left:0, right:1000, up:0, down:1000}
+
+	this.SetEdges = function( param ){
+		this.EdgeOfWorld.left = param.left || this.EdgeOfWorld.left;
+		this.EdgeOfWorld.right = param.right || this.EdgeOfWorld.right;
+		this.EdgeOfWorld.up = param.up || this.EdgeOfWorld.up;
+		this.EdgeOfWorld.down = param.down || this.EdgeOfWorld.down;
+	}
+
+	this.GetEdges = function(){
+		return this.EdgeOfWorld;
+	}
+
+	this.StageCenter = {
+		point: {x:0,y:0},
+		Translate: function( pos_){
+			this.point.x += (pos_.x*(pos_.SCALE) );
+			this.point.y += (pos_.y*(pos_.SCALE) );
+		},
+		HandleResize: function( pos_ ){
+			this.point.x *= pos_.x;
+			this.point.y *= pos_.y;
+		}
+	}
+	this.GetWorldCenter = function(){
+		return this.StageCenter.point;
+	}
+
+	this.ISREADY = function(){
+		return (this.model != null)?(true):(false);
+	}
 
 	this.SetController = function( controller ){
 		this.controller = controller;
@@ -29,6 +60,7 @@ function Renderer ( param ){
 	}
 
 	this.Translate = function( pos ){
+		this.StageCenter.Translate( pos );
 		this.model.Translate( pos );
 	}
 
@@ -42,12 +74,18 @@ function Renderer ( param ){
 
 		this.stage.canvas.width = window.innerWidth ;
 		this.stage.canvas.height = window.innerHeight ;
+		this.StageCenter.point = {x:window.innerWidth/2, y:window.innerHeight/2};
+		this.PAUSED = false;
 
 		if(this.model)
 			this.FillStage();
 
 		this.ListenEvent();
 
+	}
+
+	this.ToogleGame = function(){
+		this.PAUSED = !this.PAUSED;
 	}
 
 	this.FillStage = function(){
@@ -78,7 +116,7 @@ function Renderer ( param ){
 				h: hi,
 				SCALE: self.SCALE
 			} );
-
+			self.StageCenter.HandleResize({x:wi, y:hi});
 	        self.stage.canvas.width = window.innerWidth ;
 	        self.stage.canvas.height = window.innerHeight ;
 
@@ -122,6 +160,34 @@ function Renderer ( param ){
 			createjs.Ticker.setFPS( fps );
 	}
 
+	this.throwFrames = function( fc ){
+		var self = this;
+		var frameCount = fc;
+
+		function func(){
+			if(frameCount != 0)
+	        	requestAnimFrame(func);
+
+	        frameCount--;
+	        if(self.PAUSED)return;
+	        
+	        if(self.stats)
+	        	self.stats.update();
+	                
+	        self.world.Step(1 / 60, 10, 10);	                     
+	  		
+	        self.model.Update();
+	        if(self.controller)
+	        	self.controller.Update();
+	        //self.backgrounds.Update();
+	        self.stage.update();
+	        //self.stage.canvas.getContext('2d').drawImage(im,100,100);
+	        
+	        self.world.ClearForces();
+	    }
+	    func();
+	}
+
 
 	this.render = function (){
 
@@ -153,11 +219,16 @@ function Renderer ( param ){
 	        
 	        if(self.stats)
 	        	self.stats.update();
+
+	        if(!self.PAUSED){
 	                
-	        self.world.Step(1 / 60, 10, 10);	                     
-	  		
-	        self.model.Update();
-	        self.controller.Update();
+		        self.world.Step(1 / 60, 10, 10);	                     
+		  		
+		        //self.model.Update();
+		        if(self.controller)
+		        	self.controller.Update();
+		    }
+		    self.model.Update();
 	        //self.backgrounds.Update();
 	        self.stage.update();
 	        //self.stage.canvas.getContext('2d').drawImage(im,100,100);
