@@ -4,7 +4,19 @@
 
 window.onload = function(){
 
-    window.GAME = { STATE:"GAME_WAIT", _states:{"wait":"GAME_WAIT","ready": "GAME_READY","on": "GAME_ON","pause": "GAME_PAUSE","over": "GAME_OVER"} };
+    window.GAME = { STATE:"GAME_WAIT", _states:{"wait":"GAME_WAIT","ready": "GAME_READY","on": "GAME_ON","pause": "GAME_PAUSE","over": "GAME_OVER"},
+    loaderEl : document.getElementById("loaderEl"), loaderNum : 0};
+    this.loaderEl.style.display = "inline";
+    GAME.stepLoader = function(){
+        this.loaderNum = (this.loaderNum)%3 + 1;
+        var _str = window.getComputedStyle(this.loaderEl, null).backgroundImage;
+        _str = _str.replace( /(\d)(\.png)/g , (this.loaderNum + 1) + "\.png" );
+        this.loaderEl.style.backgroundImage = _str;
+        //console.log(_str);
+    }
+    GAME.endLoader = function(){
+        this.loaderEl.style.display = "none";
+    }
     GAME.ready = function(){
         this.STATE = this._states["ready"];
         document.getElementById('layer1').style.display = "inline";
@@ -135,14 +147,17 @@ function load(){
 
     var manifest = [
         {src:"resources/persona/Pixie/pixie_easel.png", id:"player", callback:playerComplete},
+        {src:"resources/world/backfon.png", id:"backfon", callback:backfonComplete},
+        {src:"resources/world/groundgrass.png", id:"groundgrass", callback:groundgrassComplete},
+        {src:"resources/world/Lava.png", id:"Lava", callback:lavaComplete},
+        {src:"resources/world/tree1.png", id:"tree1", callback:tree1Complete},
+        {src:"resources/world/tree2.png", id:"tree2", callback:tree2Complete}
+/*
         {src:"resources/world/backgrass1.png", id:"backgrass1", callback:backgrass1Complete},
         {src:"resources/world/ceilingrass.png", id:"ceilingrass", callback:ceilingrassComplete},
-        {src:"resources/world/groundgrass.png", id:"groundgrass", callback:groundgrassComplete},
-        {src:"resources/world/backfon.png", id:"backfon", callback:backfonComplete},
-
         {src:"resources/world/upgrass.png", id:"upgrass", callback:upgrassComplete},
         {src:"resources/world/up_back.png", id:"up_back", callback:up_backComplete},
-        {src:"resources/world/Lava.png", id:"Lava", callback:lavaComplete}
+*/
         //{src:"resources/img/WorldAssets-hd_easeljs.json", id:"JSON"}
         //{src:"resources/world/parallaxHill2.png", id:"BG"}
     ];
@@ -185,27 +200,58 @@ function load(){
         LOAD: true
     });
 
+    function backfonComplete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:0} );
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed:0.5,y:0}, {id:0} );
+        GAME.stepLoader();
+    }
+    function backgrass1Complete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);                    
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:0} );
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/(2.75*b_mp.image.height),gap: 0,speed:0.7,y:(Render.GetHeight()*1.5/2.75)}, {id:1} );
+        GAME.stepLoader();
+    }
+    function tree1Complete( model ){
+        //console.log( model.tag );        
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/(1.25*b_mp.image.height),gap: 0,widthScale: 4,speed:0.8,y:0}, {id:2} );    
+        GAME.stepLoader();
+    }
+    function tree2Complete( model ){
+        //console.log( model.tag );        
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);
+        //BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.2,y:0}, {id:3} );        
+        GAME.stepLoader();
+    }
+
+    function lavaComplete( model ){
+        //console.log( model.tag );        
+        var b_mp = new createjs.Bitmap( model.tag );
+        //console.log(b_mp);
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/(2.75*b_mp.image.height),gap: 0,speed:0.9,y:(Render.GetHeight()*1.75/2.75)}, {id:4} );
+        GAME.stepLoader();
+    }
+
+    //sort->do();
     function upgrassComplete( model ){
         //console.log( model.tag );
         var b_mp = new createjs.Bitmap( model.tag );
         //console.log(b_mp);
-        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.3,y:0}, {id:2} );
-        
-    }
-
-    function backgrass1Complete( model ){
-        var b_mp = new createjs.Bitmap( model.tag );
-        //console.log(b_mp);                    
-        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-        BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:1.3,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/(Render.GetHeight() - 150)} );
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/(4*b_mp.image.height),gap: 0,speed:1.3,y:0}, {id:2} );
+        GAME.stepLoader();
     }
 
     function ceilingrassComplete( model ){
         //console.log(result);
         var b_mp = new createjs.Bitmap( model.tag );
         //console.log(b_mp);                    
-        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-        BG.AddSkin( b_mp , {scale:100/b_mp.image.height,gap: 0,speed:1.4,y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
+        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:0} );
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/(8*b_mp.image.height),gap: 0,speed:1.4,y:0} );
+        GAME.stepLoader();
     }
 
     function groundgrassComplete( model ){
@@ -223,23 +269,18 @@ function load(){
             skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
             skinProperty: {gap:{left:12,right:12}},
             width: 5*w,
-            height: 100,
+            height: Render.GetHeight()/4,
             //scale: {h:3,w:1},
-            gap:{y:50},
+            gap:{y:Render.GetHeight()/12},
             type: "polygon",/*
             speed: 0,*/
-            pos: {x: 5*w/2,y: (Render.GetHeight() - 50 )}
+            pos: {x: 5*w/2,y: (7*Render.GetHeight()/8 )}
         });
         Model.AddModelToBegin(ground);
 
         Render.SetEdges( {left:0, right:5*w} );
         //os.splice(0,0,ground);
-    }
-
-    function backfonComplete( model ){
-        var b_mp = new createjs.Bitmap( model.tag );
-        //BG.AddSkin( b_mp3 , {scale:300/b_mp3.image.height,speed: 5, y:/*(Render.GetHeight() - 100 )*b_mp.image.height/100*/0} );
-        BG.AddSkin( b_mp , {scale:Render.GetHeight()/b_mp.image.height,speed:1.1,y:0}, {id:0} );
+        GAME.stepLoader();
     }
 
     function playerComplete( model ){
@@ -282,28 +323,18 @@ function load(){
         ss.getAnimation("run").next = "run";
         ss.getAnimation("flat").next = "flat";
         grant.gotoAndPlay("stand");
-    /*
-        grant.scaleX = 0.12;
-        grant.scaleY = 0.24;*/
+        //grant.scaleX = grant.scaleY = Render.GetHeight()/650;
 
-        playee.SetSkin( grant );
-
+        playee.SetSkin( grant, Render.GetHeight()/650 );
+        GAME.stepLoader();
     }
     
     function up_backComplete( model ){
         //console.log( model.tag );        
         var b_mp = new createjs.Bitmap( model.tag );
         //console.log(b_mp);
-        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.2,y:0}, {id:1} );
-        
-    }
-
-    function lavaComplete( model ){
-        //console.log( model.tag );        
-        var b_mp = new createjs.Bitmap( model.tag );
-        //console.log(b_mp);
-        BG.AddSkin( b_mp , {scale:150/b_mp.image.height,gap: 0,speed:1.2,y:(Render.GetHeight() - 150)}, {id:3} );
-        
+        BG.AddSkin( b_mp , {scale:Render.GetHeight()/(4*b_mp.image.height),gap: 0,speed:1.2,y:0}, {id:1} );
+        GAME.stepLoader();
     }
     
 
@@ -332,9 +363,10 @@ function load(){
 
         BG.Finalize();
 
-        Model.AddModelToBegin( BG );
+        //Model.AddModelToBegin( BG );
 
-        Render.SetModel( Model );
+        Render.SetModel( Model, BG );
+        Render.SetEdgesFromModel();
 
         console.log(Render);
 
@@ -371,7 +403,7 @@ function load(){
                 return;
             }
         }
-
+        GAME.endLoader();
         Render.render();
 
         /*Render.tick();

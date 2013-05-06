@@ -43,10 +43,11 @@ function Persona(param){
 
 	}
 
-	this.SetSkin = function(skin){
+	this.SetSkin = function(skin, preScale){
 
 		skin.regX = skin.getBounds().width*this.SCALE/(this._initSCALE*2);
 		skin.regY = (skin.getBounds().height - 75)*this.SCALE/(this._initSCALE);
+		skin._preScale = preScale;
 		console.log(skin);
 
 		this.skins.push(skin);
@@ -216,7 +217,7 @@ function Persona(param){
 			this.skins[0].x = this.bodys["box"].GetWorldCenter().x * this.SCALE;
 			this.skins[0].y = this.bodys["box"].GetWorldCenter().y * this.SCALE;
 			//console.log("\tLOOK HEAR\t");
-			this.skins[0].scaleX = this.skins[0].scaleY = this.SCALE/this._initSCALE;
+			this.skins[0].scaleX = this.skins[0].scaleY = this.skins[0]._preScale*this.SCALE/this._initSCALE;
 
 	}
 

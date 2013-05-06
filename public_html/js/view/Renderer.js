@@ -1,10 +1,28 @@
 function Renderer ( param ){
 
-	this.SetModel = function( model ){
+	this.SetModel = function( model, bg ){
 		this.model = model;
+		this.backModel = bg;
 		this.FillStage();
 	}
 	this.EdgeOfWorld = {left:0, right:1000, up:0, down:1000}
+	this.EdgesOfModels = [];
+
+	this.SetEdgesFromModel = function(){
+		this.EdgesOfModels = [];
+		for (var i = 0; i < this.backModel.skins.length; i++) {
+			if(this.backModel.skins[i].Edge )
+				this.EdgesOfModels = this.EdgesOfModels.concat(this.backModel.skins[i].Edge);
+		}
+	}
+
+	this.GetModelEdges = function(){
+		return this.EdgesOfModels;
+	}
+
+	this._requeryModel = function( index ){
+		this.backModel._requeryFrame( index );
+	}
 
 	this.SetEdges = function( param ){
 		this.EdgeOfWorld.left = param.left || this.EdgeOfWorld.left;
@@ -62,6 +80,8 @@ function Renderer ( param ){
 	this.Translate = function( pos ){
 		this.StageCenter.Translate( pos );
 		this.model.Translate( pos );
+		this.backModel.Translate( pos );
+		this.SetEdgesFromModel();
 	}
 
 	this.Initialize = function( param ){
@@ -69,6 +89,7 @@ function Renderer ( param ){
 		this.stage = param.stage;
 		this.world = param.world;
 		this.model = param.model || null;
+		this.backModel = param.bg || null;
 		//this.backgrounds = param.bg || null;
 		this.SCALE = param.SCALE || (window.innerHeight / 12 /*Model.inWorldHeight*/) || 50;
 
@@ -77,7 +98,7 @@ function Renderer ( param ){
 		this.StageCenter.point = {x:window.innerWidth/2, y:window.innerHeight/2};
 		this.PAUSED = false;
 
-		if(this.model)
+		if(this.model && this.backModel)
 			this.FillStage();
 
 		this.ListenEvent();
@@ -89,7 +110,12 @@ function Renderer ( param ){
 	}
 
 	this.FillStage = function(){
-
+		
+		for (var j = 0; j < this.backModel.skins.length; j++) {
+			if(this.backModel.skins[j].skin_type != "auto")
+				this.stage.addChild(this.backModel.skins[j]);
+			//console.log( this.backModel.objs[i].skins[j] );
+		};
 		for (var i = 0; i < this.model.objs.length; i++) {
 			for (var j = 0; j < this.model.objs[i].skins.length; j++) {
 				if(this.model.objs[i].skins[j].skin_type != "auto")
@@ -112,6 +138,11 @@ function Renderer ( param ){
 			self.SCALE = (window.innerHeight / 12 /*Model.inWorldHeight*/) ;
 
 			self.model.HandleResize( {
+				w: wi,
+				h: hi,
+				SCALE: self.SCALE
+			} );
+			self.backModel.HandleResize( {
 				w: wi,
 				h: hi,
 				SCALE: self.SCALE
@@ -177,6 +208,7 @@ function Renderer ( param ){
 	        self.world.Step(1 / 60, 10, 10);	                     
 	  		
 	        self.model.Update();
+	        self.backModel.Update();
 	        if(self.controller)
 	        	self.controller.Update();
 	        //self.backgrounds.Update();
@@ -228,6 +260,7 @@ function Renderer ( param ){
 		        if(self.controller)
 		        	self.controller.Update();
 		    }
+		    self.backModel.Update();
 		    self.model.Update();
 	        //self.backgrounds.Update();
 	        self.stage.update();
@@ -248,6 +281,7 @@ function Renderer ( param ){
 			        self.world.Step(1 / 60, 10, 10);	                     
 			  		
 			        self.model.Update();
+			        self.backModel.Update();
 			        //self.backgrounds.Update();
 			        self.stage.update();
 			        //self.stage.canvas.getContext('2d').drawImage(im,100,100);

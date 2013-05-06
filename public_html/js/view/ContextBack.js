@@ -7,9 +7,9 @@ function contextBack( param ){
 	this.Initialize = function( param ){
 
 		this.stage = param.stage;
-		this.skinsURL = [];
+		this.SCALE = 1;
+
 		this.skins = []; //new createjs.Container();
-		this._protoBMPS = [];//new createjs.Bitmap( img );
 		if( param.skins ){
 			if( param.skins.length ){
 				for (var i = 0; i < param.skins.length; i++) {
@@ -34,16 +34,15 @@ function contextBack( param ){
 		//this.stage.addChild( cont );
 		if(posi)
 			cont.posId = posi.id ;
-		this.skins.push( cont );
 
-		if( url.image ){
-			this.skinsURL.push( "url" );			
-			this._protoBMPS.push( url );
+		if( url.image ){			
+			cont._protoBMPS = url ;
 		}
 		else{
-			this.skinsURL.push( url );		
-			this._protoBMPS.push( new createjs.Bitmap( url ) );
+			cont._protoBMPS = new createjs.Bitmap( url );
 		}
+
+		this.skins.push( cont );
 
 		this.Set(cont, param);
 	}
@@ -67,13 +66,14 @@ function contextBack( param ){
 		var GAP = 0;
 		
 		//var ids = id || this._protoBMPS.length - 1;
-		var curBMP = this._protoBMPS[this.skins.indexOf(cont)];
-		curBMP.snapToPixel = true;
+		var _index = this.skins.indexOf(cont);
 		var curContainer = cont;
+		var curBMP = curContainer._protoBMPS;
+		//curBMP.snapToPixel = true;
 		var param = curContainer.param || parama;
 
 		
-		var scale = 1, _ResizeScale = 1;
+		var scale = 1, _ResizeScale = 1, widthScale = 1;
 		if( param && param._Resize){
 			this._resizeParam( param, param._Resize);
 		}
@@ -86,6 +86,13 @@ function contextBack( param ){
 				GAP = param.gap ;
 				curBMP.sourceRect = new createjs.Rectangle(GAP, 0, curBMP.image.width - 2*GAP , curBMP.image.height);
 			}
+			else
+				param.gap = GAP;
+
+			if(param.widthScale)
+				widthScale = param.widthScale;
+			else
+				param.widthScale = widthScale;
 
 			if(param.x)
 				curContainer.x = param.x ;
@@ -98,7 +105,7 @@ function contextBack( param ){
 			curContainer.param = param;
 		}
 		////console.log(scale);
-		var width = (curBMP.image.width - 2*GAP )* scale  ;
+		var width = (curBMP.image.width - 2*GAP )* scale * widthScale ;
 		var count = this._adjustWidth( width );
 
 		//for (var i = 0; i < this.skins.length; i++) {	
@@ -127,9 +134,13 @@ function contextBack( param ){
 			////console.log(scale);
 			_bmp.scaleX = _bmp.scaleY = scale ;
 			_bmp.GAP = GAP;
-			_bmp.x = i *( _bmp.image.width - 2*GAP )* _bmp.scaleX ;//(curBMP.image.width - 2*GAP )* scale * _ResizeScale 
+			_bmp.x = width * i  + (width/2 - width/(widthScale*2)) ;//* ( 2*widthScale*i + widthScale - 1) / 2 ;
 			//_bmp.cache(0,0,_bmp.image.width * scale,_bmp.image.height*scale);
 		}
+		//this.Edges[_index] = count *( _bmp.image.width - 2*GAP )* _bmp.scaleX;
+		curContainer.Edge =  ( count * width );
+
+		//console.log( this.Edges[_index] );
 		for (var i = count; i < curContainer.getNumChildren(); i++) {
 			curContainer.removeChildAt(i);
 		};
@@ -138,21 +149,34 @@ function contextBack( param ){
 
 	
 	this.Sort = function(){
-		var ides = [];
-		var _bmpes = [];
+		var ides = [];		
 		for (var i = 0; i < this.skins.length; i++) {
 			if(this.skins[i].posId != undefined ){
 				ides.push( this.skins[i]);
-				this.skins.splice(i,1);
-				_bmpes.push( this._protoBMPS[i] );
-				this._protoBMPS.splice(i,1);i--;
+				this.skins.splice(i,1);				
+				i--;
 			}
 		}
 		ides.sort(function(a,b){
 			return a.posId-b.posId});
 		this.skins = ides.concat(this.skins);
-		this._protoBMPS = _bmpes.concat(this._protoBMPS);
-		////console.log(this.skins);
+	}
+
+	this._requeryFrame = function( index ){
+		var curContainer = this.skins[index];
+		var _min = curContainer.getChildAt(0);
+		var _max = curContainer.getChildAt(0);
+		for (var i = 0; i < curContainer.getNumChildren(); i++) {
+			var temp = curContainer.getChildAt(i);
+			console.log(temp.x);
+			if( temp.x < _min.x)
+				_min = temp;
+			if( temp.x > _max.x)
+				_max = temp;
+		}
+		//console.log(curContainer.param.widthScale);
+		_min.x = _max.x + ( ( _min.image.width - 2*curContainer.param.gap ) * _min.scaleX * curContainer.param.widthScale ) ;
+		curContainer.Edge += ( ( _min.image.width - 2*curContainer.param.gap )* _min.scaleX * curContainer.param.widthScale );
 	}
 
 	this.Finalize = function(){
@@ -161,40 +185,21 @@ function contextBack( param ){
 
 	this.Translate = function( pos ){
 
-		console.log(pos.x*pos.SCALE);
-		console.log(this.skins[0].x);
-
+		this.SCALE = pos.SCALE;
 		for (var i = 0; i < this.skins.length; i++) {
-			if( Math.abs(pos.x*pos.SCALE) >= 1.5 ){
-				this.skins[i].x -= pos.x*pos.SCALE*this.skins[i].param.speed;
+			//if( Math.abs(pos.x*pos.SCALE) >= 1.5 ){
+				this.skins[i].x -= /*parseInt(*/ ( pos.x*pos.SCALE*this.skins[i].param.speed );
+				this.skins[i].Edge -= /*parseInt(*/ ( pos.x*pos.SCALE*this.skins[i].param.speed );
 				//this.skins[i].y -= pos.y *pos.SCALE;
-			}
+			/*}
 			else{
 				//console.log( pos.x*pos.SCALE );
 				this.skins[i].x -= pos.x*pos.SCALE;
 				//this.skins[i].y -= pos.y *pos.SCALE;
-			}
+			}*/
 		};
 	}
 
-	this.action = function ( container ){
-
-		for (var i = 0; i < container.getNumChildren(); i++) {
-			var child = container.getChildAt(i);
-			child.x -= (container.param.speed != undefined)?container.param.speed:3;			
-			if( child.x <= -(child.image.width - 2*child.GAP)* child.scaleX ){
-				//remove from start add to the end
-				//child = container.getChildAt(0).clone();
-				//child.x = container.getChildAt(container.getNumChildren() - 1).x + child.image.width * child.scaleX  ;
-				child.x += (container.getNumChildren() ) * (child.image.width - 2*child.GAP)* child.scaleX ;
-				//container.removeChildAt(0);
-				//container.addChild( child );
-				//container.getChildAt(0).x -= 3;
-			}
-		};
-		
-
-	}
 
 	this._adjustWidth = function( curWidth ){
 
@@ -205,10 +210,6 @@ function contextBack( param ){
 	}
 
 	this.Update = function(){
-
-		/*for (var i = 0; i < this.skins.length; i++) {
-			this.action( this.skins[i] );
-		};*/
 
 	}
 	this.HandleResize = function( parama ){

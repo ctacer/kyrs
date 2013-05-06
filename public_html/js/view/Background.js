@@ -1,107 +1,179 @@
 
 
-function Background( param ){
+//contextBack
 
-	this._skins = {};
-	this.skins = [];
-	//this.stage = null;
+function contextBack( param ){
 
-	this.AddSkin = function( param ){
+	this.Initialize = function( param ){
+
 		this.stage = param.stage;
-		this._skins[param.title] = {
-			stage:param.stage,
-			skin:param.skin,
-			action:Paarser(param.callback)
-		};
-		this.skins.push(param.skin);
+		this.SCALE = 1;
+		this.Edge = 0;
+		this._initSCALE = 1;
+		this.skins = []; //new createjs.Container();
+		this._protoBMPS = [];//new createjs.Bitmap( img );
+
 	}
 
-	if(param)
-		this.AddSkin( param );
+	this.Initialize( param );
 
-	this.Update = function(){
-		for (var key in this._skins) {
-			this._skins[key].action();
-		};
+	this.AddSkin = function( url, param ,posi ){
+
+		var cont = new createjs.Container();
+		cont.x = 0;cont.y = 0;
+		
+		if(posi)
+			cont.posId = posi.id ;
+		this.skins.push( cont );
+
+		this._protoBMPS.push( url );
+
+		this.Set(cont, param);
 	}
 
-	this._loopAction = function(){
-
+	this.Set = function( cont, parama ){
+		var GAP = 0;
+		
+		//var ids = id || this._protoBMPS.length - 1;
+		var curBMP = this._protoBMPS[this.skins.indexOf(cont)];
+		curBMP.snapToPixel = true;
+		var curContainer = cont;
+		var param = curContainer.param || parama;
 
 		
-	}
+		var scale = 1;
+		if(param){
+			if(param.scale)
+				scale = param.scale;
+			else param.scale = 1;
 
-	this.HandleResize = function( param ){
-
-
-
-	}
-
-	function Paarser( stringToAction ){
-
-		//"x+=27;y+=0;loopx=(-10)y=(-0);"
-		
-		var regEx = /[xy]\+=\d+/igm;
-
-		var mas = stringToAction.match(regEx);
-		var str = "";
-		if(mas)
-			for (var i = 0; i < mas.length; i++) {
-				str+="this.skin."+mas[i]+";"
-			};
-		
-
-		regEx = /(loop)(([xy])=\(-?\d+\))(([xy])=\(-?\d+\))?/im;
-		mas = stringToAction.match(regEx);
-		if(mas){
-			if(mas[3] != undefined){
-				var res = (mas[3] == "x")?("width"):("height");
-				str += "if(this.skin." + mas[3] + " > this.stage.canvas." + res + "){this.skin." + mas[2] + ";}";
+			if(param.gap != undefined){
+				GAP = param.gap ;
+				curBMP.sourceRect = new createjs.Rectangle(GAP, 0, curBMP.image.width - 2*GAP , curBMP.image.height);
 			}
-			if(mas[5] != undefined){
-				var res = (mas[5] == "x")?("width"):("height");
-				str  += "if(this.skin." + mas[5] + " > this.stage.canvas." + res + "){this.skin." + mas[4] + ";}";
+
+			if(param.x)
+				curContainer.x = param.x ;
+			if(param.y)
+				curContainer.y = param.y ;
+			if(!param.speed){
+				param.speed = 1;
+			}
+
+			curContainer.param = param;
+		}
+		var adjWidth = false,width_perc = 1;
+		if(param.orientation)
+			switch (param.orientation.type.toUpperCase()){
+				case "FILL":
+					scale = stage.canvas.height/curBMP.image.height;
+					break;
+				case "WIDTH":
+					adjWidth = param.orientation.width || this.stage.canvas.width;
+					break;
+				case "WIDTH_PERCENT":
+					width_perc = param.orientation.width || 1;
+					break;
+				case "HEIGHT":
+					scale = stage.canvas.height/curBMP.image.height;
+					break;
+				default:
+
+					break;
+			}
+
+		var width = (curBMP.image.width - 2*GAP )* scale * width_perc ;
+		var count = this._adjustWidth( width, adjWidth );
+
+		//for (var i = 0; i < this.skins.length; i++) {	
+		/*
+		if( count >= curContainer.getNumChildren() ){	
+			for (var i = 0; i < curContainer.getNumChildren(); i++) {
+				curContainer[i]
+			};		
+			for (var i = curContainer.getNumChildren(); i < count; i++) {
+				var _bmp = curBMP.clone();//new createjs.Bitmap( this.skinsURL[this.skinsURL.length - 1] );
+				_bmp.scaleX = _bmp.scaleY = scale ;
+				curContainer
+			};*/
+		//};
+
+		for (var i = 0; i < count; i++) {
+
+			var _bmp;
+			if( !curContainer.getChildAt(i) ){
+				_bmp = curBMP.clone();//new createjs.Bitmap( this.skinsURL[this.skinsURL.length - 1] );
+				curContainer.addChild( _bmp );
+			}
+			else
+				_bmp = curContainer.getChildAt(i);
+
+			////console.log(scale);
+			_bmp.scaleX = _bmp.scaleY = scale ;
+			_bmp.GAP = GAP;
+			_bmp.x = i *( _bmp.image.width - 2*GAP )* _bmp.scaleX ;//(curBMP.image.width - 2*GAP )* scale * _ResizeScale 
+			//_bmp.cache(0,0,_bmp.image.width * scale,_bmp.image.height*scale);
+		}
+		for (var i = count; i < curContainer.getNumChildren(); i++) {
+			curContainer.removeChildAt(i);
+		};
+		////console.log(curContainer);
+	}
+
+	
+	this.Sort = function(){
+		var ides = [];
+		var _bmpes = [];
+		for (var i = 0; i < this.skins.length; i++) {
+			if(this.skins[i].posId != undefined ){
+				ides.push( this.skins[i]);
+				this.skins.splice(i,1);
+				_bmpes.push( this._protoBMPS[i] );
+				this._protoBMPS.splice(i,1);i--;
 			}
 		}
-		
-		str = "try{" + str + "}catch(exc){console.log('parsed update Function');}";		
-		var func = Function(str);
-
-		console.log(str);
-		return func;
+		ides.sort(function(a,b){
+			return a.posId-b.posId});
+		this.skins = ides.concat(this.skins);
+		this._protoBMPS = _bmpes.concat(this._protoBMPS);
+		////console.log(this.skins);
 	}
-	
-}
 
+	this.Finalize = function(){
+		this.Sort();
+	}
 
-
-/*
-
-
-
-
-var parsedStr = "x+=27;y+=0;loopx(-10)y(0);";
-		
-		var regEx = /[xy]\+=\d+/igm;
-
-		var mas = stringToAction.match(regEx);
-		var str = "";
-		for (var i = 0; i < mas.length; i++) {
-			str+="this.skin."+mas[i]+";"
+	this.Translate = function( pos ){
+		this.SCALE = pos.SCALE;
+		for (var i = 0; i < this.skins.length; i++) {
+			this.skins[i].x -= pos.x*pos.SCALE*this.skins[i].param.speed;			
 		};
+	}
+
+
+	this._adjustWidth = function( curWidth, adjWidth ){
+
+		var count;
+		if(!adjWidth)
+			count = ( Math.floor( this.stage.canvas.width / curWidth ) + 2 );
+		else
+			count = ( Math.floor( adjWidth / curWidth ) + 1 );
+
+		return count;
 		
+	}
 
-		regEx = /loop\w{1,2}/im;
-		mas = stringToAction.match(regEx);
-		if(mas[0].search( /x/im ) != -1)
-			str += "if(this.skin.x > stage.canvas.width){this.skin.x = 0;}";
-		if(mas[0].search( /y/im ) != -1)
-			str += "if(this.skin.y > stage.canvas.height){this.skin.y = 0;}";
-		
-		str = "try{" + str + "}catch(exc){console.log('parsed update Function');}";		
-		var func = Function(str);
+	this.Update = function(){
 
-		console.log(str);
-		return func;
+		/*for (var i = 0; i < this.skins.length; i++) {
+			this.skins[i].x -= this.skins[i].x*this.skins[i].param.speed;
+			//this.skins[i].y -= pos.y *pos.SCALE;
+		};*/
 
-		*/
+	}
+	this.HandleResize = function( parama ){
+		this.SCALE = parama.SCALE;
+	}
+
+
+}

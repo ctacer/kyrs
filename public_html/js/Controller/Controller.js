@@ -18,12 +18,19 @@ function Controller( prop ){
 		var width = this.render.GetWidth();
 		var pos = this.player.GetPosition();
 		var point = this.render.GetWorldCenter();
+		var modelEdges = this.render.GetModelEdges();
+
+		for (var i = 0; i < modelEdges.length; i++) {
+			if (modelEdges[i] - 25 <= width)
+				this.render._requeryModel(i);
+		};
+		//console.log(modelEdges);
 
 		if( pos.x < width/2 - 100  ){
 			var _pos = {
-				x: (pos.x - width/2 + 100)/pos.SCALE,
+				x: ( (pos.x - width/2 + 100)/pos.SCALE ),
 				y: 0,
-				SCALE: pos.SCALE 
+				SCALE: (pos.SCALE)
 			};
 			if( (point.x + _pos.x*_pos.SCALE) - width/2 >= edge.left ){
 				this.render.Translate( _pos );			
@@ -31,9 +38,9 @@ function Controller( prop ){
 		}
 		if( pos.x > width/2 + 100  ){
 			var _pos = {
-				x: (pos.x - width/2 - 100)/pos.SCALE,
+				x: ( (pos.x - width/2 - 100)/pos.SCALE).toFixed(2),
 				y: 0,
-				SCALE: pos.SCALE 
+				SCALE: ( pos.SCALE ).toFixed(2)
 			};
 			//console.log( this.player.bodys["wheel"].GetLinearVelocity() );
 			//console.log(_pos.x*this.player.GetPosition().SCALE );
@@ -51,13 +58,9 @@ function Controller( prop ){
 		var self = this;
 		this.STATE = "LISTEN";
 
-		window.addEventListener('keydown',function(event){
-			_keydownhandler(event,self);
-		},false);
+		window.addEventListener('keydown',_keydownhandler,false);
 
-		window.addEventListener('keyup',function(event){
-			_keyuphandler(event,self);
-		},false);
+		window.addEventListener('keyup',_keyuphandler,false);
 
 	}
 	this.StopListenPlayer = function(){
@@ -65,13 +68,9 @@ function Controller( prop ){
 		var self = this;
 		this.STATE = "SLEEP";
 
-		window.removeEventListener('keydown',function(event){
-			_keydownhandler(event,self);
-		},false);
+		window.removeEventListener('keydown',_keydownhandler,false);
 
-		window.removeEventListener('keyup',function(event){
-			_keyuphandler(event,self);
-		},false);
+		window.removeEventListener('keyup',_keyuphandler,false);
 
 	}
 	this.Toogle = function(){
@@ -80,8 +79,8 @@ function Controller( prop ){
 		else if(this.STATE == "SLEEP")
 			this.ListenPlayer();
 	}
-
-	function _keydownhandler(event, self){
+	var self = this;
+	function _keydownhandler(event){
 		if ( event.keyCode >= 37 && event.keyCode <= 39 ){
 			self.player.setMovement(event.keyCode);
 		}
@@ -97,7 +96,7 @@ function Controller( prop ){
 		}
 		*/
 	}
-	function _keyuphandler(event, self){
+	function _keyuphandler(event){
 		if ( event.keyCode >= 37 && event.keyCode <= 39 ){
 			self.player.resetMovement(event.keyCode);
 		}
