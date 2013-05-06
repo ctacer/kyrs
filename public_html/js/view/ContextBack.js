@@ -137,10 +137,11 @@ function contextBack( param ){
 			_bmp.x = width * i  + (width/2 - width/(widthScale*2)) ;//* ( 2*widthScale*i + widthScale - 1) / 2 ;
 			//_bmp.cache(0,0,_bmp.image.width * scale,_bmp.image.height*scale);
 		}
-		//this.Edges[_index] = count *( _bmp.image.width - 2*GAP )* _bmp.scaleX;
-		curContainer.Edge =  ( count * width );
+		curContainer.Edge = {
+			right: ( curContainer.x + count * width ),
+			left: (curContainer.x)
+		};
 
-		//console.log( this.Edges[_index] );
 		for (var i = count; i < curContainer.getNumChildren(); i++) {
 			curContainer.removeChildAt(i);
 		};
@@ -162,21 +163,37 @@ function contextBack( param ){
 		this.skins = ides.concat(this.skins);
 	}
 
-	this._requeryFrame = function( index ){
+	this._requeryFrameR = function( index ){
 		var curContainer = this.skins[index];
 		var _min = curContainer.getChildAt(0);
 		var _max = curContainer.getChildAt(0);
 		for (var i = 0; i < curContainer.getNumChildren(); i++) {
 			var temp = curContainer.getChildAt(i);
-			console.log(temp.x);
 			if( temp.x < _min.x)
 				_min = temp;
 			if( temp.x > _max.x)
 				_max = temp;
 		}
-		//console.log(curContainer.param.widthScale);
+		console.log( ( _min.image.width - 2*curContainer.param.gap ) * _min.scaleX * curContainer.param.widthScale  );
 		_min.x = _max.x + ( ( _min.image.width - 2*curContainer.param.gap ) * _min.scaleX * curContainer.param.widthScale ) ;
-		curContainer.Edge += ( ( _min.image.width - 2*curContainer.param.gap )* _min.scaleX * curContainer.param.widthScale );
+		curContainer.Edge.right += ( ( _min.image.width - 2*curContainer.param.gap )* _min.scaleX * curContainer.param.widthScale );
+		curContainer.Edge.left += ( ( _min.image.width - 2*curContainer.param.gap )* _min.scaleX * curContainer.param.widthScale );
+	}
+	this._requeryFrameL = function( index ){
+		var curContainer = this.skins[index];
+		var _min = curContainer.getChildAt(0);
+		var _max = curContainer.getChildAt(0);
+		for (var i = 0; i < curContainer.getNumChildren(); i++) {
+			var temp = curContainer.getChildAt(i);
+			if( temp.x < _min.x)
+				_min = temp;
+			if( temp.x > _max.x)
+				_max = temp;
+		}
+		console.log( ( _min.image.width - 2*curContainer.param.gap ) * _min.scaleX * curContainer.param.widthScale  );
+		_max.x = _min.x - ( ( _max.image.width - 2*curContainer.param.gap ) * _max.scaleX * curContainer.param.widthScale ) ;
+		curContainer.Edge.left -= ( ( _max.image.width - 2*curContainer.param.gap )* _max.scaleX * curContainer.param.widthScale );
+		curContainer.Edge.right -= ( ( _max.image.width - 2*curContainer.param.gap )* _max.scaleX * curContainer.param.widthScale );
 	}
 
 	this.Finalize = function(){
@@ -188,8 +205,9 @@ function contextBack( param ){
 		this.SCALE = pos.SCALE;
 		for (var i = 0; i < this.skins.length; i++) {
 			//if( Math.abs(pos.x*pos.SCALE) >= 1.5 ){
-				this.skins[i].x -= /*parseInt(*/ ( pos.x*pos.SCALE*this.skins[i].param.speed );
-				this.skins[i].Edge -= /*parseInt(*/ ( pos.x*pos.SCALE*this.skins[i].param.speed );
+				this.skins[i].x -= ( pos.x*pos.SCALE*this.skins[i].param.speed );
+				this.skins[i].Edge.right -= ( pos.x*pos.SCALE*this.skins[i].param.speed );
+				this.skins[i].Edge.left -= ( pos.x*pos.SCALE*this.skins[i].param.speed );
 				//this.skins[i].y -= pos.y *pos.SCALE;
 			/*}
 			else{

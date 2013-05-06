@@ -20,10 +20,6 @@ function Controller( prop ){
 		var point = this.render.GetWorldCenter();
 		var modelEdges = this.render.GetModelEdges();
 
-		for (var i = 0; i < modelEdges.length; i++) {
-			if (modelEdges[i] - 25 <= width)
-				this.render._requeryModel(i);
-		};
 		//console.log(modelEdges);
 
 		if( pos.x < width/2 - 100  ){
@@ -32,15 +28,27 @@ function Controller( prop ){
 				y: 0,
 				SCALE: (pos.SCALE)
 			};
+
+			for (var i = 0; i < modelEdges.length; i++) {
+				
+				if (modelEdges[i].left + 25 >= 0)
+					this.render._requeryModelL(i);
+			};
 			if( (point.x + _pos.x*_pos.SCALE) - width/2 >= edge.left ){
 				this.render.Translate( _pos );			
 			}
 		}
 		if( pos.x > width/2 + 100  ){
 			var _pos = {
-				x: ( (pos.x - width/2 - 100)/pos.SCALE).toFixed(2),
+				x: ( (pos.x - width/2 - 100)/pos.SCALE),
 				y: 0,
-				SCALE: ( pos.SCALE ).toFixed(2)
+				SCALE: ( pos.SCALE )
+			};
+
+			for (var i = 0; i < modelEdges.length; i++) {
+				if (modelEdges[i].right - 25 <= width){
+					this.render._requeryModelR(i);
+				}
 			};
 			//console.log( this.player.bodys["wheel"].GetLinearVelocity() );
 			//console.log(_pos.x*this.player.GetPosition().SCALE );

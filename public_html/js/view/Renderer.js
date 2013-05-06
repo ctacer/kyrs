@@ -20,8 +20,11 @@ function Renderer ( param ){
 		return this.EdgesOfModels;
 	}
 
-	this._requeryModel = function( index ){
-		this.backModel._requeryFrame( index );
+	this._requeryModelR = function( index ){
+		this.backModel._requeryFrameR( index );
+	}
+	this._requeryModelL = function( index ){
+		this.backModel._requeryFrameL( index );
 	}
 
 	this.SetEdges = function( param ){
