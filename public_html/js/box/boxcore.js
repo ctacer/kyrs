@@ -75,6 +75,16 @@ window.onload = function(){
       }
     }
 
+    window.logSkin = function( idskin ){
+        console.log("skin x\t" + Render.backModel.skins[idskin].x );
+        console.log("skin edge\t");
+        console.log(Render.backModel.skins[idskin].Edge);
+        console.log("children x\t");
+        for (var i = 0; i < Render.backModel.skins[idskin].children.length; i++) {
+            console.log(Render.backModel.skins[idskin].children[i].x);
+        };
+    }
+
     load();
 
 

@@ -139,7 +139,7 @@ function Renderer ( param ){
 			var	hi = ( ( window.innerHeight )/self.stage.canvas.height );
 
 			self.SCALE = (window.innerHeight / 12 /*Model.inWorldHeight*/) ;
-
+			console.log("resize");
 			self.model.HandleResize( {
 				w: wi,
 				h: hi,
@@ -203,15 +203,16 @@ function Renderer ( param ){
 	        	requestAnimFrame(func);
 
 	        frameCount--;
-	        if(self.PAUSED)return;
+	        if(!self.PAUSED){
 	        
-	        if(self.stats)
-	        	self.stats.update();
-	                
-	        self.world.Step(1 / 60, 10, 10);	                     
-	  		
-	        self.model.Update();
-	        self.backModel.Update();
+		        if(self.stats)
+		        	self.stats.update();
+		                
+		        self.world.Step(1 / 60, 10, 10);	                     
+		  		
+		        self.model.Update();
+		        self.backModel.Update();
+	    	}
 	        if(self.controller)
 	        	self.controller.Update();
 	        //self.backgrounds.Update();

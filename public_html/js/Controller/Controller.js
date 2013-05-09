@@ -31,8 +31,9 @@ function Controller( prop ){
 
 			for (var i = 0; i < modelEdges.length; i++) {
 				
-				if (modelEdges[i].left + 25 >= 0)
+				if (modelEdges[i].left + 25 >= 0){
 					this.render._requeryModelL(i);
+				}
 			};
 			if( (point.x + _pos.x*_pos.SCALE) - width/2 >= edge.left ){
 				this.render.Translate( _pos );			
