@@ -6,7 +6,7 @@ function Persona(param){
 	this._initSCALE = this.SCALE;
 	this.bodys = {};
 	this.skins = [];
-	this.STATE = "sleep";
+	this.STATE = "standR";
 	this._events = {};
 
 	this.Initialize = function(world,pos){
@@ -51,7 +51,7 @@ function Persona(param){
 		console.log(skin);
 
 		this.skins.push(skin);
-		this.STATE = "stand";
+		this.STATE = "standR";
 		this.Update();
 	}
 
@@ -101,9 +101,9 @@ function Persona(param){
 
 	function moveLeft( self ){
 
-		if(self.STATE == "stand"){
-			self.skins[0].gotoAndPlay("run");
-			self.STATE = "left";
+		if(self.STATE == "standR" || self.STATE == "standL"){
+			self.STATE = "runL";
+			self.skins[0].gotoAndPlay(self.STATE);
 		}
 		self.bodys['wheel'].SetAngularVelocity( -Math.PI*2 );
 
@@ -111,10 +111,10 @@ function Persona(param){
 
 	function stopLeft( self ){
 
-		if(self.STATE != "flat"){
-			self.STATE = "stand";
+		if(self.STATE != "flatL" && self.STATE != "flatR"){
+			self.STATE = "standL";
 			//self.bodys['wheel'].SetAngularVelocity(Math.PI*0);
-			self.skins[0].gotoAndPlay("stand");
+			self.skins[0].gotoAndPlay(self.STATE);
 		}
 		self.bodys['wheel'].SetAngularDamping(5000);
 
@@ -123,9 +123,10 @@ function Persona(param){
 
 	function moveRight( self ){
 
-		if(self.STATE == "stand"){
-			self.skins[0].gotoAndPlay("run");			
-			self.STATE = "right";				
+		if(self.STATE == "standL" || self.STATE == "standR"){
+			self.STATE = "runR";
+			self.skins[0].gotoAndPlay(self.STATE);			
+							
 		}
 		self.bodys['wheel'].SetAngularDamping(0);
 		self.bodys['wheel'].SetAngularVelocity( Math.PI*2 );
@@ -135,9 +136,9 @@ function Persona(param){
 
 	function stopRight( self ){
 
-		if(self.STATE != "flat"){
-			self.STATE = "stand";
-			self.skins[0].gotoAndPlay("stand");
+		if(self.STATE != "flatL" && self.STATE != "flatR"){
+			self.STATE = "standR";
+			self.skins[0].gotoAndPlay(self.STATE);
 		}
 		//this.bodys['box'].SetLinearVelocity(new b2Vec2(0,0));
 		//this.bodys['wheel'].SetLinearVelocity(new b2Vec2(0,0));
@@ -155,13 +156,21 @@ function Persona(param){
 	function moveUp( self ){
 		//catch collide with ground body
 
-		if(self.STATE != "flat"){
-			self.skins[0].gotoAndPlay("flat");
+		if(self.STATE != "flatL" && self.STATE != "flatR"){
+			if(self.STATE[self.STATE.length - 1] == 'L')
+				self.STATE = "flatL";
+			else /*if(self.STATE[self.STATE.length - 1] == 'R')*/
+				self.STATE = "flatR";
+			self.skins[0].gotoAndPlay(self.STATE);
 			//this.bodys['wheel'].ApplyImpulse( new b2Vec2(0,-1), this.bodys['wheel'].GetWorldCenter() );
 			self.bodys['box'].ApplyImpulse( new b2Vec2(0,-150.0), self.bodys['box'].GetWorldCenter() );
 			//self.bodys['box'].SetLinearVelocity( new b2Vec2(0,-3) );
 		}
-		self.STATE = "flat";
+		/*if(self.STATE[self.STATE.length - 1] == 'L')
+			self.STATE = "flatL";
+		else //if(self.STATE[self.STATE.length - 1] == 'R')
+			self.STATE = "flatR";
+		*/
 
 	}
 
@@ -184,9 +193,15 @@ function Persona(param){
 	}
 
 	this._land = function(){
-		this.STATE = "stand";
-		this.skins[0].gotoAndPlay("stand");
-		this.bodys['wheel'].SetAngularDamping(5000);
+		console.log(this.STATE);
+		if(this.STATE == 'flatL' || this.STATE == 'flatR'){
+			if(this.STATE == 'flatL')
+				this.STATE = "standL";
+			else
+				this.STATE = "standR";
+			this.skins[0].gotoAndPlay(this.STATE);
+			this.bodys['wheel'].SetAngularDamping(5000);
+		}
 	}
 
 	this.GetState = function(){

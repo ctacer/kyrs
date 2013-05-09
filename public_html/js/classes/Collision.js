@@ -25,11 +25,9 @@ function ContactListener(){
 			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'GROUND' ){
 				//console.log("flat \'n\' land handler");
 				var player = contact.GetFixtureB().GetBody().GetUserData();
-				if(player.STATE == "flat"){
-					player._land();
-				}else{
-					
-				}
+				
+				player._land();
+				
 			}
 			//console.log('\n');
 

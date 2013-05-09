@@ -146,7 +146,7 @@ function load(){
     var skin;
 
     var manifest = [
-        {src:"resources/persona/Pixie/pixie_easel.png", id:"player", callback:playerComplete},
+        {src:"resources/persona/Pixie/pixie_array_full.png", id:"player", callback:playerComplete},
         {src:"resources/world/groundgrass.png", id:"groundgrass", callback:groundgrassComplete},
 
         {src:"resources/world/backfon.png", id:"backfon", callback:backfonComplete},
@@ -329,6 +329,18 @@ function load(){
     function playerComplete( model ){
         var b_mp = new createjs.Bitmap( model.tag );
 
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange=function()
+        {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200)
+            {
+                onSpriteLoaded(xmlhttp.responseText);
+            }
+        }
+        xmlhttp.open("GET","/resources/persona/Pixie/pixie_array_full.json",true);
+        xmlhttp.send();
+/*
         spriteSheet = {
             "images": [model.tag],"frames": [
 
@@ -355,21 +367,31 @@ function load(){
                     "flat":[12, 14, "flat",6],
                     "stand":[11,11,"stand",6]
             }
+        }*/
+
+        function onSpriteLoaded( text ){
+            var spriteSheet = JSON.parse(text);
+            console.log(spriteSheet);
+            spriteSheet.images[0] = model.tag;
+
+            var ss = new createjs.SpriteSheet(spriteSheet);
+            //ss.addEventListener("complete", function(event){});
+            grant = new createjs.BitmapAnimation(ss);
+
+            // Set up looping
+            /*ss.getAnimation("fallL").next = "fallL";
+            ss.getAnimation("fallR").next = "fallR";
+            ss.getAnimation("runL").next = "runL";
+            ss.getAnimation("runR").next = "runR";
+            ss.getAnimation("flatL").next = "flatL";
+            ss.getAnimation("flatR").next = "flatR";*/
+            grant.gotoAndPlay("standR");
+            //grant.scaleX = grant.scaleY = Render.GetHeight()/650;
+
+            playee.SetSkin( grant, Render.GetHeight()/650 );
+            GAME.stepLoader();
         }
-
-        var ss = new createjs.SpriteSheet(spriteSheet);
-        //ss.addEventListener("complete", function(event){});
-        grant = new createjs.BitmapAnimation(ss);
-
-        // Set up looping
-        ss.getAnimation("fall").next = "fall";
-        ss.getAnimation("run").next = "run";
-        ss.getAnimation("flat").next = "flat";
-        grant.gotoAndPlay("stand");
-        //grant.scaleX = grant.scaleY = Render.GetHeight()/650;
-
-        playee.SetSkin( grant, Render.GetHeight()/650 );
-        GAME.stepLoader();
+        
     }    
 
     function handlLoad( models ){

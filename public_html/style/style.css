@@ -70,14 +70,25 @@ body{
 }
 #help_panel_inside{
 	position: absolute;
-	right:30%;
-	left:30%;
-	top:30%;
+	right:0%;
+	left:60%;
+	top:10%;
+	bottom: 10%;
 	text-align: center;
 	font-size: 1.5em;
 	/*background-color: rgba(37,40,74,1);*/
 	color: white;
+	/*box-shadow: 2px 2px 15px rgba(255,255,255,0.7),-2px -2px 15px rgba(255,255,255,0.7);*/
+	/* 3d transformetion */
+	perspective:150;
+	-webkit-perspective:150; /* Safari and Chrome */
+}
+#help_panel_inside>div{
 	box-shadow: 2px 2px 15px rgba(255,255,255,0.7),-2px -2px 15px rgba(255,255,255,0.7);
+	transform:rotateY(-2deg);
+	-webkit-transform:rotateY(-2deg);
+	transform-origin:right center;
+	-webkit-transform-origin:right center; /* Safari and Chrome */
 }
 #help_panel{
 	display: none;
