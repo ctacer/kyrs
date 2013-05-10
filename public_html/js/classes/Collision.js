@@ -8,13 +8,15 @@ function ContactListener(){
 
 		this.listener.BeginContact = function(contact){
 			//Begin Contact
+			var conA = contact.GetFixtureA().GetBody().GetUserData();
+			var conB = contact.GetFixtureB().GetBody().GetUserData();
 
-			if( !contact.GetFixtureA().GetBody().GetUserData() || !contact.GetFixtureB().GetBody().GetUserData()  )
+			if( !conA || !conB  )
 				return;
 /*
-			if( contact.GetFixtureA().GetBody().GetUserData().name && contact.GetFixtureA().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'GROUND' ){
+			if( conA.name && conA.name.toUpperCase() == 'PLAYER' && conB.toUpperCase() == 'GROUND' ){
 				//console.log("flat \'n\' land handler");
-				var player = contact.GetFixtureA().GetBody().GetUserData();
+				var player = conA;
 				if(player.STATE == "flat"){
 					player._land();
 				}else{
@@ -22,20 +24,22 @@ function ContactListener(){
 				}
 			}
 */
-			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'GROUND' ){
+			if( conB.name && conA.name && conB.name.toUpperCase() == 'PLAYER' && conA.name.toUpperCase() == 'GROUND' ){
 				//console.log("flat \'n\' land handler");
-				var player = contact.GetFixtureB().GetBody().GetUserData();
+				var player = conB;
 				
 				player._land();
 				
 			}
+			
+			//pixiObj
 			//console.log('\n');
 
 			//SpecialButton
-			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'SPECIALBUTTON' && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'SPECIALBUTTON' && conB.name.toUpperCase() == 'PLAYER' ){
 				throwNewGravityFeature();
 			}
-			if( contact.GetFixtureA().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'SPECIALBUTTON' && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'PLAYER' ){
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'SPECIALBUTTON' && conA.name.toUpperCase() == 'PLAYER' ){
 				throwNewGravityFeature();
 			}
 			
@@ -43,24 +47,75 @@ function ContactListener(){
 		}
 		this.listener.EndContact = function(contact){
 			//End Contact
-			/*console.log( contact.GetFixtureA().GetBody().GetUserData() );
-			console.log( contact.GetFixtureB().GetBody().GetUserData() );*/
+			/*console.log( conA );
+			console.log( conB );*/
+			var conA = contact.GetFixtureA().GetBody().GetUserData();
+			var conB = contact.GetFixtureB().GetBody().GetUserData();
+
+			if( !conA || !conB  )
+				return;
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'PIXIOBJ' && conB.name.toUpperCase() == 'PLAYER' ){
+				//console.log("end");
+				conA.Dispatch();
+				GAME.stepScore();
+				//contact.SetEnabled(true);
+
+			}
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'PIXIOBJ' && conA.name.toUpperCase() == 'PLAYER' ){
+				//console.log("end");
+				conB.Dispatch();
+				GAME.stepScore();
+				//contact.SetEnabled(true);
+			}
 
 		}
 		this.listener.PostSolve = function(contact, impulse){
 			//PostSolve
+			/*var conA = contact.GetFixtureA().GetBody().GetUserData();
+			var conB = contact.GetFixtureB().GetBody().GetUserData();
+
+			if( !conA || !conB  )
+				return;
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'PIXIOBJ' && conB.name.toUpperCase() == 'PLAYER' ){
+				//console.log(contact);
+				conA.Dispatch();
+				GAME.stepScore();
+
+			}
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'PIXIOBJ' && conA.name.toUpperCase() == 'PLAYER' ){
+				//console.log(contact);
+				conB.Dispatch();
+				GAME.stepScore();
+			}*/
 		}
 		this.listener.PreSolve = function(contact, oldManifold){
 			//PreSolve
 
-			if( !contact.GetFixtureA().GetBody().GetUserData() || !contact.GetFixtureB().GetBody().GetUserData()  )
+			var conA = contact.GetFixtureA().GetBody().GetUserData();
+			var conB = contact.GetFixtureB().GetBody().GetUserData();
+
+			if( !conA || !conB  )
 				return;
 			
-			if( contact.GetFixtureB().GetBody().GetUserData().name && contact.GetFixtureA().GetBody().GetUserData().toUpperCase() == 'LADDER' && contact.GetFixtureB().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' ){
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'PIXIOBJ' && conB.name.toUpperCase() == 'PLAYER' ){
+				console.log("start");
+				//conA.Dispatch();
+				//GAME.stepScore();
+				//contact.SetEnabled(false);
+
+			}
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'PIXIOBJ' && conA.name.toUpperCase() == 'PLAYER' ){
+				console.log("start");
+				//conB.Dispatch();
+				//GAME.stepScore();
+				//contact.SetEnabled(false);
+			}
+
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'LADDER' && conB.name.toUpperCase() == 'PLAYER' ){
 				//console.log(contact);
 				contact.SetEnabled(false);
 			}
-			if( contact.GetFixtureA().GetBody().GetUserData().name && contact.GetFixtureB().GetBody().GetUserData().toUpperCase() == 'LADDER' && contact.GetFixtureA().GetBody().GetUserData().name.toUpperCase() == 'PLAYER' ){
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'LADDER' && conA.name.toUpperCase() == 'PLAYER' ){
 				//console.log(contact);
 				contact.SetEnabled(false);
 			}

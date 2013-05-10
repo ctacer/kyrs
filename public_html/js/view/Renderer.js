@@ -266,6 +266,7 @@ function Renderer ( param ){
 		    }
 		    self.backModel.Update();
 		    self.model.Update();
+		    
 	        //self.backgrounds.Update();
 	        self.stage.update();
 	        //self.stage.canvas.getContext('2d').drawImage(im,100,100);

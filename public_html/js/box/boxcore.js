@@ -5,7 +5,7 @@
 window.onload = function(){
 
     window.GAME = { STATE:"GAME_WAIT", _states:{"wait":"GAME_WAIT","ready": "GAME_READY","on": "GAME_ON","pause": "GAME_PAUSE","over": "GAME_OVER"},
-    loaderEl : document.getElementById("loaderEl"), loaderNum : 0};
+    loaderEl : document.getElementById("loaderEl"), loaderNum : 0, SCORE: 0,ScoreEl : document.getElementById("ScoreEl")};
     this.loaderEl.style.display = "inline";
     GAME.stepLoader = function(){
         this.loaderNum = (this.loaderNum)%3 + 1;
@@ -23,6 +23,11 @@ window.onload = function(){
         document.getElementById('control_panel').style.display = "inline";
     }
     GAME.toogle = function(){}
+    GAME.stepScore = function(){
+        this.SCORE += 10;
+        this.ScoreEl.innerHTML = this.SCORE;
+        playee.POWER = this.SCORE%100;
+    }
 
 
     document.getElementById("start_button").addEventListener('click',function(){
@@ -173,7 +178,18 @@ function load(){
         {src:"resources/world/leaves2.png", id:"leaves2", callback:leaves2Complete},
         {src:"resources/world/leaves3.png", id:"leaves3", callback:leaves3Complete},
 
-        {src:"resources/world/ceilingrass.png", id:"ceilingrass", callback:ceilingrassComplete}
+        {src:"resources/world/ceilingrass.png", id:"ceilingrass", callback:ceilingrassComplete},
+
+        {src:"resources/world/pixie objs/candy.png", id:"candy", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/watermelon.png", id:"watermelon", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/guitar.png", id:"guitar", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/panda.png", id:"panda", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/phone.png", id:"phone", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/rainbow.png", id:"rainbow", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/smile.png", id:"smile", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/unicorn.png", id:"unicorn", callback:pixiObjComplete},
+        {src:"resources/world/pixie objs/shine.png", id:"shine", callback:pixiShineObjComplete}
+
 /*
 
 */
@@ -182,6 +198,8 @@ function load(){
     ];
 
     var os = [];
+    var pixiObjs = [];
+    var pixiShine = null;
 
     var w = stage.canvas.width;
     var h = stage.canvas.height;
@@ -206,6 +224,14 @@ function load(){
             height: h,
             pos: {x: 10/2,y: h/2}
         });
+        wall.Set({
+            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
+            type:"polygon",
+            width: 10,
+            height: h,
+            pos: {x: 5*w - 10/2,y: h/2}
+        });
+        //6*w/2
         os.push(wall);
 
         BG = new contextBack({
@@ -218,6 +244,30 @@ function load(){
         callback: handlLoad,
         LOAD: true
     });
+
+    function pixiShineObjComplete( model ){
+        pixiShine = new createjs.Bitmap( model.tag );
+        GAME.stepLoader();
+    }
+
+    function pixiObjComplete( model ){
+        var b_mp = new createjs.Bitmap( model.tag );
+        
+        var setter = {
+            skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
+            width: b_mp.image.width,//*(Render.GetWidth()/650),
+            height: b_mp.image.height,//*(Render.GetHeight()/650),
+            //scale: {h:3,w:1},            
+            type: "polygon",
+            bodyName: "pixiObj",
+            skinProperty: {accurate:true},/*
+            speed: 0,*/
+            pos: {x: 0,y: 0 }
+        }
+        pixiObjs.push(setter);
+
+        GAME.stepLoader();
+    }
 
     //0
     function backfonComplete( model ){
@@ -321,14 +371,15 @@ function load(){
         ground.Set({
             skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
             skinProperty: {gap:{left:12,right:12}},
-            width: 5*w,
+            width: 6*w,
             height: Render.GetHeight()/4,
             //scale: {h:3,w:1},
             gap:{y:Render.GetHeight()/12},
             type: "polygon",/*
             speed: 0,*/
-            pos: {x: 5*w/2,y: (7*Render.GetHeight()/8 )}
+            pos: {x: 6*w/2,y: (7*Render.GetHeight()/8 )}
         });
+
         Model.AddModelToBegin(ground);
 
         Render.SetEdges( {left:0, right:5*w} );
@@ -424,6 +475,9 @@ function load(){
             }
         }
 */
+        var ob = setPixiObjs(pixiObjs, pixiShine ,(Render.GetEdges().right - Render.GetEdges().left ));
+        console.log(ob);
+        Model.AddModel( ob );
 
         Model.AddModel( os );
 
@@ -470,16 +524,116 @@ function load(){
             }
         }
         GAME.endLoader();
+        //Render.createDebuger( window.innerHeight/12 );
         Render.render();
 
         /*Render.tick();
         Render.SetFPS( 15 );*/
 
-        //Render.createDebuger( window.innerHeight/12 );
-
         //Render.render();
 
     }
+
+}
+
+function setPixiObjs( arr , shinebg , activewidth){
+
+    var ret = [];
+    var obs = new PGObject({  
+        type_: "static",                      
+        world:Model.GetWorld(),
+        SCALE:Render.GetSCALE()
+    });
+    /*var temp = obs,curPos = {x: Render.GetWidth()/2, y: Render.GetHeight()*2/3},sign = 1;
+    //temp = obs.clone();
+    sign = (Math.random() >= 0.5)?(1):(-1);
+    console.log(sign);
+    var ind = Math.round(Math.random()*(arr.length -1) );
+    curPos.x += (Math.round(Math.random()*100));
+    curPos.y += sign*Math.round(Math.random()*20);
+    curPos.x = Render.GetWidth()/2;curPos.y = Render.GetHeight()/2;
+    console.log(curPos);
+    arr[ind].pos = {x: curPos.x, y: curPos.y };        
+    temp.Set(arr[ind]);
+    temp.Set({
+        skin: shinebg,
+        width: shinebg.image.width,
+        height: shinebg.image.height,          
+        type: "polygon",
+        skinProperty: {accurate:true},
+        pos: {x: curPos.x, y: curPos.y },
+        DISABLEBODY : true
+    });
+    temp.setAction( function(body,skins){
+        body.SetAngle( body.GetAngle() + Math.PI/180);
+        if( Math.round(body.GetAngle()*180) % 6 == 0)
+            for (var i = 0; i < skins.length; i++) {
+                skins[i].actX = (1 + Math.random()/10);
+                skins[i].actY = (1 + Math.random()/10);
+            };
+    });
+    ret.push(temp);
+    console.log(temp.GetPosition());
+    console.log(ret);*/
+    
+    var temp = obs,curPos = {x: 0, y: Render.GetHeight()*2/3},sign = 1;
+    console.log( activewidth );
+    var count = Math.round(activewidth*0.7/100);
+    var countb = count - Math.round(activewidth*0.3/100);
+    var delta = Render.GetWidth()/2;//Math.floor(activewidth*0.3);
+    console.log( count );
+    console.log( countb );
+    console.log( delta );
+    //count = 10;
+    for (var i = 0; i < count; i++) {
+        temp = obs.clone();
+        sign = (Math.random() >= 0.5)?(1):(-1);
+        var ind = Math.round(Math.random()*(arr.length -1) );
+        if(i % countb == 0)
+            curPos.x += delta;
+        curPos.x += 100 + sign*(Math.round(Math.random()*50));curPos.y += sign*Math.round(Math.random()*20);
+        arr[ind].pos = {x: curPos.x, y: curPos.y };
+        arr[ind].skin = arr[ind].skin.clone();
+        arr[ind].shiftskin = true;
+        arr[ind].isSensor = true;
+        temp.Set(arr[ind]);
+        //console.log(curPos);
+        temp.Set({
+            skin: shinebg.clone(),
+            width: shinebg.image.width,
+            height: shinebg.image.height,          
+            type: "polygon",
+            shiftskin: true,
+            bodyName: "pixiObj",
+            skinProperty: {accurate:true},
+            pos: {x: curPos.x, y: curPos.y },
+            DISABLEBODY : true
+        });
+        temp.setAction( function(body,skins){
+            body.SetAngle( body.GetAngle() + Math.PI/180);
+            if( Math.round(body.GetAngle()*180) % 6 == 0)
+                for (var i = 0; i < skins.length; i++) {
+                    skins[i].actX = (1 + Math.random()/10);
+                    skins[i].actY = (1 + Math.random()/10);
+                };
+        });
+        ret.push(temp);
+    }
+
+    /**for (var i = 0; i < arr.length; i++) {
+        
+        temp.Set({
+            skin: shinebg,
+            width: shinebg.image.width*(Render.GetWidth()/650),
+            height: shinebg.image.height*(Render.GetHeight()/650),          
+            type: "polygon",
+            pos: {x: 0,y: 0 },
+            DISABLEBODY : true
+        });
+    }*/
+    
+
+    return ret;
 
 }
 

@@ -141,7 +141,19 @@ body{
 	-webkit-transform:rotateY(0deg);
 	border-color: rgba(255,50,0,1);
 }
-
+#GAMERES{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 200px;
+	height: 40px;
+}
+#ScoreEl{
+	color: green;
+	/*text-align: center;*/
+	font-size: 2.5em;
+	border: 1px solid rgba(255,255,255,0.5);
+}
 
 
 /*

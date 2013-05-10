@@ -8,6 +8,7 @@ function Persona(param){
 	this.skins = [];
 	this.STATE = "standR";
 	this._events = {};
+	this.POWER = 0;
 
 	this.Initialize = function(world,pos){
 
@@ -38,7 +39,7 @@ function Persona(param){
 	    
 	    this.setRevoluteJoint( {world:this.world, b1:b2, b2:b1, anchor:b2.GetWorldCenter()} );	
 
-	    //console.log(this.bodys["wheel"]);		
+	    ////console.log(this.bodys["wheel"]);		
 	    
 
 	}
@@ -48,7 +49,7 @@ function Persona(param){
 		skin.regX = skin.getBounds().width*this.SCALE/(this._initSCALE*2);
 		skin.regY = (skin.getBounds().height - 75)*this.SCALE/(this._initSCALE);
 		skin._preScale = preScale;
-		console.log(skin);
+		//console.log(skin);
 
 		this.skins.push(skin);
 		this.STATE = "standR";
@@ -75,7 +76,7 @@ function Persona(param){
 	}
 
 	this.resetMovement = function(code){code+="";
-		//console.log(code);
+		////console.log(code);
 		this._events[code].value = false;
 		this._events[code].stop(this);
 	}
@@ -148,7 +149,7 @@ function Persona(param){
 		//self.bodys['wheel'].ApplyTorque( - Math.PI*200 );
 		//self.bodys['wheel'].SetAngularVelocity( Math.PI*0 );
 		//self.bodys['wheel'].SetLinearDamping(100);
-		//console.log(self.bodys['wheel']);
+		////console.log(self.bodys['wheel']);
 		//self.skins[0].gotoAndPlay("run");			
 
 	}
@@ -163,7 +164,7 @@ function Persona(param){
 				self.STATE = "flatR";
 			self.skins[0].gotoAndPlay(self.STATE);
 			//this.bodys['wheel'].ApplyImpulse( new b2Vec2(0,-1), this.bodys['wheel'].GetWorldCenter() );
-			self.bodys['box'].ApplyImpulse( new b2Vec2(0,-150.0), self.bodys['box'].GetWorldCenter() );
+			self.bodys['box'].ApplyImpulse( new b2Vec2(0,(-150.0 - self.POWER) ), self.bodys['box'].GetWorldCenter() );
 			//self.bodys['box'].SetLinearVelocity( new b2Vec2(0,-3) );
 		}
 		/*if(self.STATE[self.STATE.length - 1] == 'L')
@@ -193,7 +194,7 @@ function Persona(param){
 	}
 
 	this._land = function(){
-		console.log(this.STATE);
+		////console.log(this.STATE);
 		if(this.STATE == 'flatL' || this.STATE == 'flatR'){
 			if(this.STATE == 'flatL')
 				this.STATE = "standL";
@@ -219,8 +220,8 @@ function Persona(param){
 
 //			this.move();
 			/*if( this.i == 60 ){
-				console.clear();
-				console.log(Math.round(this.bodys['wheel'].GetAngularVelocity() ));
+				//console.clear();
+				//console.log(Math.round(this.bodys['wheel'].GetAngularVelocity() ));
 				this.i = 0;
 			}
 			else
@@ -231,7 +232,7 @@ function Persona(param){
 			this.skins[0].rotation = this.bodys["box"].GetAngle() * (180 / Math.PI);
 			this.skins[0].x = this.bodys["box"].GetWorldCenter().x * this.SCALE;
 			this.skins[0].y = this.bodys["box"].GetWorldCenter().y * this.SCALE;
-			//console.log("\tLOOK HEAR\t");
+			////console.log("\tLOOK HEAR\t");
 			this.skins[0].scaleX = this.skins[0].scaleY = this.skins[0]._preScale*this.SCALE/this._initSCALE;
 
 	}

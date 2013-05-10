@@ -13,6 +13,9 @@ function Model( prop ){
 			this.objs.splice(0,0,obj);
 		}
 	}
+	this.deleteObj = function(o){
+		this.objs.splice(this.objs.indexOf(o),1);
+	}
 
 	this.GetWorld = function(){
 		return this.world;
@@ -40,7 +43,18 @@ function Model( prop ){
 
 	this.Update = function(){
 		for (var i = 0; i < this.objs.length; i++) {
-	        this.objs[i].Update();
+	        if(this.objs[i].name.toUpperCase() != "DELETE")
+	        	this.objs[i].Update();
+	        else{
+	        	for (var j = 0; j < this.objs[i].bodys.length; j++) {
+	        		this.world.DestroyBody(this.objs[i].bodys[j]);
+	        	};
+	        	//var stage = this.objs[i].skins[0].getStage();
+	        	for (var j = 0; j < this.objs[i].skins.length; j++) {
+	        		/*stage.removeChild(*/ this.objs[i].skins[j].removeAllChildren(); //);
+	        	};
+	        	this.deleteObj(this.objs[i]);
+	        }
 	    }
 	}
 
