@@ -1,6 +1,6 @@
 
 
-function Model( prop ){
+function ModelCreator( prop ){
 
 	this.objs = [];
 

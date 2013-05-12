@@ -13,17 +13,33 @@ function ContactListener(){
 
 			if( !conA || !conB  )
 				return;
-/*
-			if( conA.name && conA.name.toUpperCase() == 'PLAYER' && conB.toUpperCase() == 'GROUND' ){
-				//console.log("flat \'n\' land handler");
-				var player = conA;
-				if(player.STATE == "flat"){
-					player._land();
-				}else{
 
-				}
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'KILLOBJ' && conB.name.toUpperCase() == 'PLAYER' ){
+				//console.log("end");				
+				GAME.over();
+				//contact.SetEnabled(true);
+
 			}
-*/
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'KILLOBJ' && conA.name.toUpperCase() == 'PLAYER' ){
+				//console.log("end");
+				GAME.over();
+				//contact.SetEnabled(true);
+			}
+
+			if( conB.name && conA.name && conA.name.toUpperCase() == 'PIXIOBJ' && conB.name.toUpperCase() == 'PLAYER' ){
+				//console.log("end");
+				conA.Dispatch();
+				GAME.stepScore();
+				//contact.SetEnabled(true);
+
+			}
+			if( conA.name && conB.name && conB.name.toUpperCase() == 'PIXIOBJ' && conA.name.toUpperCase() == 'PLAYER' ){
+				//console.log("end");
+				conB.Dispatch();
+				GAME.stepScore();
+				//contact.SetEnabled(true);
+			}
+
 			if( conB.name && conA.name && conB.name.toUpperCase() == 'PLAYER' && conA.name.toUpperCase() == 'GROUND' ){
 				//console.log("flat \'n\' land handler");
 				var player = conB;
@@ -49,7 +65,7 @@ function ContactListener(){
 			//End Contact
 			/*console.log( conA );
 			console.log( conB );*/
-			var conA = contact.GetFixtureA().GetBody().GetUserData();
+			/*var conA = contact.GetFixtureA().GetBody().GetUserData();
 			var conB = contact.GetFixtureB().GetBody().GetUserData();
 
 			if( !conA || !conB  )
@@ -66,7 +82,7 @@ function ContactListener(){
 				conB.Dispatch();
 				GAME.stepScore();
 				//contact.SetEnabled(true);
-			}
+			}*/
 
 		}
 		this.listener.PostSolve = function(contact, impulse){

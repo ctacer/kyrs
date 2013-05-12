@@ -154,6 +154,20 @@ body{
 	font-size: 2.5em;
 	border: 1px solid rgba(255,255,255,0.5);
 }
+#gameOverEl{
+	display: none;
+	position: absolute;
+	left:0px;
+    right:0px;
+    top:0px;
+    bottom:0px;
+    margin:auto;
+    z-index: 100;
+    width: 649px;
+    height: 147px;
+    background-image: url('../resources/controls/game_over_logo.png');
+    background-repeat: "no-repeat";
+}
 
 
 /*

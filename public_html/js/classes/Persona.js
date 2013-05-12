@@ -19,17 +19,17 @@ function Persona(param){
 		var b1,b2,joint;
 	    
 	    var jointExperimentCubeShape = new b2PolygonShape();
-	    jointExperimentCubeShape.SetAsBox(1,0.5);
+	    jointExperimentCubeShape.SetAsBox(0.7,0.5);
 
 	    b1 = this.getBody( {world:this.world, position:{x:pos.x/this.SCALE, y:pos.y/this.SCALE },
 				shape:jointExperimentCubeShape ,bodyProperty:{fixedRotation : true, userData:this/*, linearDamping: 0.4*/}, 
-				fixtureProperty: {friction: 100, restitution: 0, density: 10} } );
+				fixtureProperty: {friction: 0, restitution: 0, density: 1} } );
 
 	    
 	    this.bodys['box'] = b1;
 
 	    var jointExperimentCircleShape = new b2CircleShape();
-	    jointExperimentCircleShape.SetRadius(1);
+	    jointExperimentCircleShape.SetRadius(0.6);
 
 	    b2 = this.getBody( {world:this.world, position:{x:pos.x/this.SCALE, y:pos.y/this.SCALE + 0.5 },
 				shape:jointExperimentCircleShape, bodyProperty:{ userData:this/*, linearDamping: 0.6, angularDamping: 50*/}, 
@@ -73,6 +73,11 @@ function Persona(param){
 		this._events["39"].move = moveRight;
 		this._events["39"].stop = stopRight;
 
+		this._events["mouse"] = {};
+		this._events["mouse"].value = false;
+		this._events["mouse"].move = mouseUp;
+		this._events["mouse"].stop = mouseStop;
+
 	}
 
 	this.resetMovement = function(code){code+="";
@@ -106,7 +111,7 @@ function Persona(param){
 			self.STATE = "runL";
 			self.skins[0].gotoAndPlay(self.STATE);
 		}
-		self.bodys['wheel'].SetAngularVelocity( -Math.PI*2 );
+		self.bodys['wheel'].SetAngularVelocity( -Math.PI*5 );
 
 	}
 
@@ -130,7 +135,7 @@ function Persona(param){
 							
 		}
 		self.bodys['wheel'].SetAngularDamping(0);
-		self.bodys['wheel'].SetAngularVelocity( Math.PI*2 );
+		self.bodys['wheel'].SetAngularVelocity( Math.PI*5 );
 		//self.bodys["wheel"].SetAngularDamping(50);
 
 	}
@@ -164,7 +169,7 @@ function Persona(param){
 				self.STATE = "flatR";
 			self.skins[0].gotoAndPlay(self.STATE);
 			//this.bodys['wheel'].ApplyImpulse( new b2Vec2(0,-1), this.bodys['wheel'].GetWorldCenter() );
-			self.bodys['box'].ApplyImpulse( new b2Vec2(0,(-150.0 - self.POWER) ), self.bodys['box'].GetWorldCenter() );
+			self.bodys['box'].ApplyImpulse( new b2Vec2(0,(-2.0 ) ), self.bodys['box'].GetWorldCenter() );
 			//self.bodys['box'].SetLinearVelocity( new b2Vec2(0,-3) );
 		}
 		/*if(self.STATE[self.STATE.length - 1] == 'L')
@@ -184,6 +189,25 @@ function Persona(param){
 
 	}
 
+	function mouseUp( self ){
+		//catch collide with ground body
+
+		if(self.STATE[self.STATE.length - 1] == 'L' && self.STATE != "flatL"){
+			self.STATE = "flatL";
+			self.skins[0].gotoAndPlay(self.STATE);
+		}
+		else if (self.STATE[self.STATE.length - 1] == 'R' && self.STATE != "flatR"){
+			self.STATE = "flatR";
+			self.skins[0].gotoAndPlay(self.STATE);
+		}
+		self.bodys['box'].ApplyImpulse( new b2Vec2(0,( -1.5 ) ), self.bodys['box'].GetWorldCenter() );
+		
+	}
+
+	function mouseStop( self ){		
+		self._events["mouse"].value = false;
+	}
+
 	this.GetMovement = function(){
 
 		return { left:this._events["37"].value, 
@@ -201,6 +225,8 @@ function Persona(param){
 			else
 				this.STATE = "standR";
 			this.skins[0].gotoAndPlay(this.STATE);
+			this.bodys['wheel'].SetLinearVelocity( new b2Vec2( this.bodys['wheel'].GetLinearVelocity().x,0) );
+			this.bodys['box'].SetLinearVelocity( new b2Vec2( this.bodys['box'].GetLinearVelocity().x,0) );
 			this.bodys['wheel'].SetAngularDamping(5000);
 		}
 	}

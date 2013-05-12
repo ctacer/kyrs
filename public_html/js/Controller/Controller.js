@@ -1,5 +1,5 @@
 
-function Controller( prop ){
+function ControllerClass( prop ){
 
 	
 	this.Initialize = function( prop ){
@@ -67,9 +67,16 @@ function Controller( prop ){
 		var self = this;
 		this.STATE = "LISTEN";
 
+		self.player.setMovement("39");
+
 		window.addEventListener('keydown',_keydownhandler,false);
 
 		window.addEventListener('keyup',_keyuphandler,false);
+
+		document.getElementById('canvas').addEventListener("mousedown",clickHandlerDown,false);
+
+		document.getElementById('canvas').addEventListener("mouseup",clickHandlerUp,false);
+		//document.getElementById('canvas').addEventListener("click",clickHandler,false);
 
 	}
 	this.StopListenPlayer = function(){
@@ -77,9 +84,16 @@ function Controller( prop ){
 		var self = this;
 		this.STATE = "SLEEP";
 
+		self.player.resetMovement("39");
+
 		window.removeEventListener('keydown',_keydownhandler,false);
 
 		window.removeEventListener('keyup',_keyuphandler,false);
+
+		document.getElementById('canvas').removeEventListener("mousedown",clickHandlerDown,false);
+
+		document.getElementById('canvas').removeEventListener("mouseup",clickHandlerUp,false);
+		//document.getElementById('canvas').removeEventListener("click",clickHandler,false);
 
 	}
 	this.Toogle = function(){
@@ -89,6 +103,21 @@ function Controller( prop ){
 			this.ListenPlayer();
 	}
 	var self = this;
+	
+	function clickHandlerDown(event){
+		//console.log(event);
+		self.player.setMovement("mouse");
+	}
+	function clickHandlerUp(event){
+		//console.log(event);
+		self.player.resetMovement("mouse");
+	}
+
+
+	function clickHandler(event){
+		console.log(event);
+		self.player.setMovement("mouse");
+	}
 	function _keydownhandler(event){
 		if ( event.keyCode >= 37 && event.keyCode <= 39 ){
 			self.player.setMovement(event.keyCode);

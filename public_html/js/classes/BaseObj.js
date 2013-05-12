@@ -51,7 +51,10 @@ addProperty( BaseObject.prototype, {
 				break;
 			case "circle":
 				shape = new b2CircleShape();
-				shape.SetRadius( param.width/2 );
+				if(param.width < param.height)
+					shape.SetRadius( param.width/2 );
+				else
+					shape.SetRadius( param.height/2 );
 				break;
 			default:
 

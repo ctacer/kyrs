@@ -17,26 +17,33 @@ function DynamicObject( param ){
 		this.name = param.bodyName || 'GROUND';
 		if(!param.scale || !param.scale.h || !param.scale.w)
 			param.scale = {h:1, w:1};
-		if(!param.gap || !param.gap.y)
-			param.gap = {y:0};
+		this._initSCALE *= param.scale.h;
+		if(!param.gap)
+			param.gap = {y:0,x:0};
+		else{
+			if(!param.gap.y)
+				param.gap.y = 0;
+			if(!param.gap.x)
+				param.gap.x = 0;
+		}
 		//fix origin position
-		var skin = this.fitSkin(param.skin, param.width, param.height ,param.skinProperty );
-		skin.regX = param.width*this.SCALE/(this._initSCALE*2);
-		skin.regY = param.height*this.SCALE/(this._initSCALE*2);
+		var skin = this.fitSkin(param.skin, param.width*param.scale.h, param.height*param.scale.h ,param.skinProperty );
+		skin.regX = param.width*param.scale.h/2;//*this.SCALE/(this._initSCALE*2);
+		skin.regY = param.height*param.scale.h/2;//*this.SCALE/(this._initSCALE*2);
 		skin.actX = skin.actY = 1;
 		//
 		skin.gap = param.gap;
 
 		var shape = this.getShapeFromSkin({
 			type: param.type,
-			width: param.width/(this.SCALE/**param.scale.w*/),
-			height: (param.height - param.gap.y)/(this.SCALE/**param.scale.h*/)
+			width: param.width*(1 - param.gap.x)*param.scale.h/(this.SCALE/**param.scale.w*/),
+			height: param.height*(1 - param.gap.y)*param.scale.h/(this.SCALE/**param.scale.h*/)
 		});
 
 		this.skins.push(skin);
 		if(!param.DISABLEBODY){
-			var body = this.getBody( {world:this.world, position:{x:param.pos.x/this.SCALE, y:(param.pos.y + param.gap.y/2)/this.SCALE },
-					shape:shape ,bodyProperty:{type: this.bodyType, fixedRotation: true, userData:this/*, linearDamping: 0.4*/},fixtureProperty:{
+			var body = this.getBody( {world:this.world, position:{x:param.pos.x/this.SCALE, y:(param.pos.y + (param.gap.y*param.height/2) )/this.SCALE },
+					shape:shape ,bodyProperty:{type: this.bodyType, fixedRotation: true,allowSleep :true, userData:this/*, linearDamping: 0.4*/},fixtureProperty:{
 						isSensor:!!param.isSensor
 					} } );
 		    this.bodys.push(body);

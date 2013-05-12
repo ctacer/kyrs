@@ -5,7 +5,7 @@
 window.onload = function(){
 
     window.GAME = { STATE:"GAME_WAIT", _states:{"wait":"GAME_WAIT","ready": "GAME_READY","on": "GAME_ON","pause": "GAME_PAUSE","over": "GAME_OVER"},
-    loaderEl : document.getElementById("loaderEl"), loaderNum : 0, SCORE: 0,ScoreEl : document.getElementById("ScoreEl")};
+    loaderEl : document.getElementById("loaderEl"), loaderNum : 0, SCORE: 0,ScoreEl : document.getElementById("ScoreEl"),gameOverEl : document.getElementById("gameOverEl")};
     this.loaderEl.style.display = "inline";
     GAME.stepLoader = function(){
         this.loaderNum = (this.loaderNum)%3 + 1;
@@ -17,6 +17,16 @@ window.onload = function(){
     GAME.endLoader = function(){
         this.loaderEl.style.display = "none";
     }
+    GAME.over = function(){
+        this.toogle();
+        this.gameOverEl.style.display = "inline";
+        this.STATE = this._states["over"];
+    }
+    GAME.restart = function(){        
+        this.gameOverEl.style.display = "none;"
+        load();
+    }
+
     GAME.ready = function(){
         this.STATE = this._states["ready"];
         document.getElementById('layer1').style.display = "inline";
@@ -128,8 +138,8 @@ function load(){
 
 
 
-    window.Model = new Model({
-        gravity: {x: 0, y: 10}/*,
+    window.Model = new ModelCreator({
+        gravity: {x: 0, y: 25}/*,
         SCALE: 50*/
     });
 	var canvas = document.getElementById("canvas");
@@ -188,7 +198,9 @@ function load(){
         {src:"resources/world/pixie objs/rainbow.png", id:"rainbow", callback:pixiObjComplete},
         {src:"resources/world/pixie objs/smile.png", id:"smile", callback:pixiObjComplete},
         {src:"resources/world/pixie objs/unicorn.png", id:"unicorn", callback:pixiObjComplete},
-        {src:"resources/world/pixie objs/shine.png", id:"shine", callback:pixiShineObjComplete}
+        {src:"resources/world/pixie objs/shine.png", id:"shine", callback:pixiShineObjComplete},
+        {src:"resources/world/bad_box.png", id:"bad_box", callback:bad_boxeObjComplete}
+
 
 /*
 
@@ -199,7 +211,7 @@ function load(){
 
     var os = [];
     var pixiObjs = [];
-    var pixiShine = null;
+    var pixiShine = null,bad_box = null;
 
     var w = stage.canvas.width;
     var h = stage.canvas.height;
@@ -229,12 +241,20 @@ function load(){
             type:"polygon",
             width: 10,
             height: h,
-            pos: {x: 5*w - 10/2,y: h/2}
+            pos: {x: 15*w - 10/2,y: h/2}
+        });
+        wall.Set({
+            skin: (new createjs.Shape(new createjs.Graphics().beginFill("#000000").drawRect(0,0,10,h)) ),
+            type:"polygon",
+            width: 15*w,
+            height: 10,
+            fixtureProperty: {friction: 0, restitution: 0, density: 1},
+            pos: {x: 15*w/2,y: 5}
         });
         //6*w/2
         os.push(wall);
 
-        BG = new contextBack({
+        BG = new contextDiv({
             stage:Render.GetStage()
         });
     }
@@ -250,15 +270,21 @@ function load(){
         GAME.stepLoader();
     }
 
+    function bad_boxeObjComplete( model ){
+        bad_box = new createjs.Bitmap( model.tag );
+        GAME.stepLoader();
+    }
+
     function pixiObjComplete( model ){
         var b_mp = new createjs.Bitmap( model.tag );
         
         var setter = {
+            scale: {w:1.4,h:1.4},
             skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
             width: b_mp.image.width,//*(Render.GetWidth()/650),
             height: b_mp.image.height,//*(Render.GetHeight()/650),
             //scale: {h:3,w:1},            
-            type: "polygon",
+            type: "circle",
             bodyName: "pixiObj",
             skinProperty: {accurate:true},/*
             speed: 0,*/
@@ -371,18 +397,18 @@ function load(){
         ground.Set({
             skin: b_mp,//{rotation: 0, x: 0, y: 0,skin_type: "auto"},
             skinProperty: {gap:{left:12,right:12}},
-            width: 6*w,
+            width: 15*w,
             height: Render.GetHeight()/4,
             //scale: {h:3,w:1},
-            gap:{y:Render.GetHeight()/12},
+            gap:{y:1/3},
             type: "polygon",/*
             speed: 0,*/
-            pos: {x: 6*w/2,y: (7*Render.GetHeight()/8 )}
+            pos: {x: 15*w/2,y: (7*Render.GetHeight()/8 )}
         });
 
         Model.AddModelToBegin(ground);
 
-        Render.SetEdges( {left:0, right:5*w} );
+        Render.SetEdges( {left:0, right:15*w, up: 0, down:Render.GetHeight()*(10/12)} );
         //os.splice(0,0,ground);
         GAME.stepLoader();
     }
@@ -475,13 +501,17 @@ function load(){
             }
         }
 */
-        var ob = setPixiObjs(pixiObjs, pixiShine ,(Render.GetEdges().right - Render.GetEdges().left ));
+        var ob = setPixiObjs(pixiObjs, pixiShine , bad_box, (Render.GetEdges().right - Render.GetEdges().left - 2*Render.GetWidth() ));
         console.log(ob);
         Model.AddModel( ob );
 
         Model.AddModel( os );
 
         BG.Finalize();
+
+        /*BG = new contextDiv({
+            stage:Render.GetStage()
+        });*/
 
         //Model.AddModelToBegin( BG );
 
@@ -493,7 +523,7 @@ function load(){
 
         Render.setStatElement(document.getElementById( 'viewport' ));
 
-        window.Controller = new Controller( {
+        window.Controller = new ControllerClass( {
             player: playee,
             render: Render
         });
@@ -507,24 +537,37 @@ function load(){
                 window.Render.ToogleGame();
                 GAME.STATE = GAME._states["pause"];
             }
+            if (this.STATE == this._states["over"]){
+                //GAME.STATE = GAME._states["pause"];
+                console.log("restart");
+                document.getElementById("gameOverEl").style.display = "none";
+                Render.RESTART = true;
+                Model = null;
+                playee = null;
+                Controller = null;
+                Render = null;
+                this.restart();
+            }
             if(this.STATE == this._states["pause"]){
                 GAME.STATE = GAME._states["on"];
-                Controller.Toogle();
                 window.Render.ToogleGame();
+                Controller.Toogle();
                 document.getElementById("control_panel").style.display = "none";
                 document.getElementById("layer1").style.display = "none";
             }
             else if(this.STATE == this._states["on"]){
                 GAME.STATE = GAME._states["pause"];
-                Controller.Toogle();
                 window.Render.ToogleGame();
+                Controller.Toogle();
                 document.getElementById("control_panel").style.display = "inline";
                 document.getElementById("layer1").style.display = "inline";
                 return;
             }
         }
         GAME.endLoader();
-        //Render.createDebuger( window.innerHeight/12 );
+        //Render.createDebuger( /*window.innerHeight/12*/ );
+        
+        //Render.stressTest(3*60);
         Render.render();
 
         /*Render.tick();
@@ -536,7 +579,7 @@ function load(){
 
 }
 
-function setPixiObjs( arr , shinebg , activewidth){
+function setPixiObjs( arr , shinebg , box , activewidth){
 
     var ret = [];
     var obs = new PGObject({  
@@ -544,54 +587,66 @@ function setPixiObjs( arr , shinebg , activewidth){
         world:Model.GetWorld(),
         SCALE:Render.GetSCALE()
     });
-    /*var temp = obs,curPos = {x: Render.GetWidth()/2, y: Render.GetHeight()*2/3},sign = 1;
-    //temp = obs.clone();
-    sign = (Math.random() >= 0.5)?(1):(-1);
-    console.log(sign);
-    var ind = Math.round(Math.random()*(arr.length -1) );
-    curPos.x += (Math.round(Math.random()*100));
-    curPos.y += sign*Math.round(Math.random()*20);
-    curPos.x = Render.GetWidth()/2;curPos.y = Render.GetHeight()/2;
-    console.log(curPos);
-    arr[ind].pos = {x: curPos.x, y: curPos.y };        
-    temp.Set(arr[ind]);
-    temp.Set({
-        skin: shinebg,
-        width: shinebg.image.width,
-        height: shinebg.image.height,          
-        type: "polygon",
-        skinProperty: {accurate:true},
-        pos: {x: curPos.x, y: curPos.y },
-        DISABLEBODY : true
-    });
-    temp.setAction( function(body,skins){
-        body.SetAngle( body.GetAngle() + Math.PI/180);
-        if( Math.round(body.GetAngle()*180) % 6 == 0)
-            for (var i = 0; i < skins.length; i++) {
-                skins[i].actX = (1 + Math.random()/10);
-                skins[i].actY = (1 + Math.random()/10);
-            };
-    });
-    ret.push(temp);
-    console.log(temp.GetPosition());
-    console.log(ret);*/
     
-    var temp = obs,curPos = {x: 0, y: Render.GetHeight()*2/3},sign = 1;
-    console.log( activewidth );
-    var count = Math.round(activewidth*0.7/100);
-    var countb = count - Math.round(activewidth*0.3/100);
-    var delta = Render.GetWidth()/2;//Math.floor(activewidth*0.3);
-    console.log( count );
-    console.log( countb );
-    console.log( delta );
+    var temp = obs,boxObj = obs.clone(),curPos = {x: Render.GetWidth()*2, y: 320, yy: 320},sign = 1;
+    console.log(Render.GetEdges().down);
+    var count = Math.round(activewidth*0.7/200);
+    var countb = count - Math.round(activewidth*0.3/200);
+    var delta = Render.GetWidth()/2;
     //count = 10;
     for (var i = 0; i < count; i++) {
         temp = obs.clone();
-        sign = (Math.random() >= 0.5)?(1):(-1);
+        var rand = Math.random();
+         if(rand <= 0.35){
+            sign = 1;
+         }
+         else if(rand <= 0.65)
+            sign = 0
+        else
+            sign = -1;
         var ind = Math.round(Math.random()*(arr.length -1) );
         if(i % countb == 0)
             curPos.x += delta;
-        curPos.x += 100 + sign*(Math.round(Math.random()*50));curPos.y += sign*Math.round(Math.random()*20);
+        curPos.x += 200 ;
+        curPos.y += sign*80;
+        if(curPos.y > Render.GetEdges().down){
+            curPos.y -= sign*80;
+        }
+        if(curPos.y < Render.GetEdges().up){
+            curPos.y -= sign*80;
+        }
+
+        if(curPos.y < Render.GetEdges().down/4){
+            curPos.yy = Render.GetEdges().down/2 + 80;
+        }
+        else if(curPos.y < Render.GetEdges().down*2/4){
+            curPos.yy = Render.GetEdges().down - 80;
+        }
+        else if(curPos.y < Render.GetEdges().down*3/4){
+            curPos.yy = Render.GetEdges().up + 80;
+        }
+        else if(curPos.y < Render.GetEdges().down ){
+            curPos.yy = Render.GetEdges().up/2 - 80;
+        }
+
+        //box
+        if(i%2 == 0 && curPos.yy != null){
+            boxObj = obs.clone();
+            boxObj.Set({
+                //scale: {w:1.4,h:1.4},
+                skin: box.clone(),
+                width: box.image.width,
+                height: box.image.height,          
+                type: "polygon",
+                gap: {y:1/3,x:1/3},
+                bodyName: "killObj",
+                skinProperty: {accurate:true},
+                pos: {x: curPos.x + 100, y: curPos.yy },
+                shiftskin : true
+            });
+            ret.push(boxObj);
+        }
+
         arr[ind].pos = {x: curPos.x, y: curPos.y };
         arr[ind].skin = arr[ind].skin.clone();
         arr[ind].shiftskin = true;
@@ -599,10 +654,11 @@ function setPixiObjs( arr , shinebg , activewidth){
         temp.Set(arr[ind]);
         //console.log(curPos);
         temp.Set({
+            scale: {w:1.4,h:1.4},
             skin: shinebg.clone(),
             width: shinebg.image.width,
             height: shinebg.image.height,          
-            type: "polygon",
+            type: "circle",
             shiftskin: true,
             bodyName: "pixiObj",
             skinProperty: {accurate:true},
@@ -611,26 +667,14 @@ function setPixiObjs( arr , shinebg , activewidth){
         });
         temp.setAction( function(body,skins){
             body.SetAngle( body.GetAngle() + Math.PI/180);
-            if( Math.round(body.GetAngle()*180) % 6 == 0)
+            /*if( Math.round(body.GetAngle()*180) % 6 == 0)
                 for (var i = 0; i < skins.length; i++) {
                     skins[i].actX = (1 + Math.random()/10);
                     skins[i].actY = (1 + Math.random()/10);
-                };
+                };*/
         });
         ret.push(temp);
     }
-
-    /**for (var i = 0; i < arr.length; i++) {
-        
-        temp.Set({
-            skin: shinebg,
-            width: shinebg.image.width*(Render.GetWidth()/650),
-            height: shinebg.image.height*(Render.GetHeight()/650),          
-            type: "polygon",
-            pos: {x: 0,y: 0 },
-            DISABLEBODY : true
-        });
-    }*/
     
 
     return ret;

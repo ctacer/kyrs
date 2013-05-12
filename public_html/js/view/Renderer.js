@@ -165,7 +165,7 @@ function Renderer ( param ){
 			var debugDraw = new b2DebugDraw();		
 
             debugDraw.SetSprite(document.getElementById('canvas').getContext("2d"));
-            debugDraw.SetDrawScale(scale || 50.0);
+            debugDraw.SetDrawScale(scale || this.SCALE || 50.0);
             debugDraw.SetFillAlpha(0.5);
             debugDraw.SetLineThickness(1.0);
             debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
@@ -194,27 +194,29 @@ function Renderer ( param ){
 			createjs.Ticker.setFPS( fps );
 	}
 
-	this.throwFrames = function( fc ){
+	this.stressTest = function( fc ){
 		var self = this;
-		var frameCount = fc;
+		self.frameCount = fc;
 
 		function func(){
-			if(frameCount != 0)
+			if(self.frameCount != 0)
 	        	requestAnimFrame(func);
 
-	        frameCount--;
+	        self.frameCount--;	        
+	        if(self.stats)
+	        	self.stats.update();
+
 	        if(!self.PAUSED){
-	        
-		        if(self.stats)
-		        	self.stats.update();
-		                
+	                
 		        self.world.Step(1 / 60, 10, 10);	                     
 		  		
-		        self.model.Update();
-		        self.backModel.Update();
-	    	}
-	        if(self.controller)
-	        	self.controller.Update();
+		        //self.model.Update();
+		        if(self.controller)
+		        	self.controller.Update();
+		    }
+		    self.backModel.Update();
+		    self.model.Update();
+		    
 	        //self.backgrounds.Update();
 	        self.stage.update();
 	        //self.stage.canvas.getContext('2d').drawImage(im,100,100);
@@ -228,6 +230,7 @@ function Renderer ( param ){
 	this.render = function (){
 
 		var self = this;
+		self.frameCount = 1;
 		/*var bool = false,im;
 
 		if(!bool){
@@ -251,7 +254,8 @@ function Renderer ( param ){
 
 
 		function func(){
-	        requestAnimFrame(func);
+			if(!self.RESTART)
+	        	requestAnimFrame(func);
 	        
 	        if(self.stats)
 	        	self.stats.update();
